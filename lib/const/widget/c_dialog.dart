@@ -51,8 +51,17 @@ Future<void> CDialog(
 
       final headerTextColor = buttonTheme?.foregroundColor?.resolve({}) ??
           theme.colorScheme.onPrimary;
+
+      ButtonStyle _bs = TextButton.styleFrom(
+        minimumSize: Size.zero, // Allows it to be as small as the content
+        padding: EdgeInsets.symmetric(
+            horizontal: 8, vertical: 4), // Control height here
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removes extra margin
+      );
+
       return Center(
         child: AlertDialog(
+          insetPadding: EdgeInsets.zero,
           elevation: 3,
           clipBehavior: Clip.none, // IMPORTANT
           scrollable: scrollable,
@@ -63,7 +72,7 @@ Future<void> CDialog(
             borderRadius: BorderRadius.circular(borderRadious),
           ),
           contentPadding: EdgeInsets.zero,
-          actionsPadding: EdgeInsets.zero,
+          actionsPadding: EdgeInsets.only(bottom: 2,right: 4),
 
           title: Stack(
             clipBehavior: Clip.none, // IMPORTANT
@@ -150,6 +159,7 @@ Future<void> CDialog(
           actions: [
             if (isSaveButton)
               TextButton(
+                style: _bs,
                 key: buttonKey,
                 onPressed: onButtonPressed,
                 child: Text(saveButtonText ?? "Save",
@@ -157,7 +167,7 @@ Future<void> CDialog(
                         .copyWith(fontWeight: FontWeight.w600)),
               ),
             TextButton(
-             
+               style: _bs,
               onPressed: () {
                 Navigator.of(context).pop();
                 onClose?.call();

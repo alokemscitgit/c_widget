@@ -1,5 +1,3 @@
- 
-
 import 'package:flutter/material.dart';
 import '../c_helper.dart';
 import '../theme/colors.dart';
@@ -12,7 +10,7 @@ class CGroupBox extends StatelessWidget {
     this.borderWidth,
     this.borderRadius = 8,
     this.height = 0,
-    this.padding = const EdgeInsets.symmetric(horizontal: 5, vertical: 6),
+    this.padding = const EdgeInsets.symmetric(horizontal: 5, vertical: 6),this.bgColor
   });
 
   final String headerText;
@@ -21,6 +19,7 @@ class CGroupBox extends StatelessWidget {
   final double borderRadius;
   final double height;
   final EdgeInsets padding;
+  final Color? bgColor;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,7 @@ class CGroupBox extends StatelessWidget {
           height: height > 0 ? height : null,
           padding: padding,
           decoration: BoxDecoration(
-            color: AppThemeColors.scaffoldBackground(context),
+            color: bgColor?? AppThemeColors.scaffoldBackground(context),
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
               color: borderColor,
@@ -64,7 +63,7 @@ class CGroupBox extends StatelessWidget {
           top: -1,
           left: 8,
           child: Container(
-            color: AppThemeColors.scaffoldBackground(context),
+            color: bgColor??AppThemeColors.scaffoldBackground(context),
             height: 2,
             padding: const EdgeInsets.only(
               left: 2,
