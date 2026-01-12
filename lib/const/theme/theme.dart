@@ -643,8 +643,8 @@ DatePickerThemeData _calendarTheme(Color primary, Color font, double s) {
 
     // Day cells
     dayStyle: TextStyle(
-      fontSize: 12 * s,
-      fontWeight: FontWeight.w600,
+      fontSize: 13 * s,
+      fontWeight: FontWeight.bold,
     ),
     dayForegroundColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(MaterialState.disabled)) return font.withOpacity(.5);

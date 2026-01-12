@@ -33,6 +33,7 @@ class CDatePicker extends StatefulWidget {
   bool? isError;
   bool isDisable;
   BorderRadius? borderRadious;
+  List<DateTime>? pridictDate;
   CDatePicker(
       {super.key,
       // ignore: non_constant_identifier_names
@@ -55,7 +56,9 @@ class CDatePicker extends StatefulWidget {
       this.startDate = '',
       this.isError = false,
       this.isDisable = false,
-      this.borderRadious});
+      this.borderRadious,
+      List<DateTime>? pridictDate})
+      : pridictDate = pridictDate ?? [];
 
   @override
   State<CDatePicker> createState() => _CDatePickerState();
@@ -92,7 +95,7 @@ class _CDatePickerState extends State<CDatePicker> {
           child: SizedBox(
             width: widget.width,
             height: widget.height,
-        
+
             child: Stack(
               children: [
                 _cText(context, widget, (value) {
@@ -117,11 +120,16 @@ class _CDatePickerState extends State<CDatePicker> {
             //)
           ),
         ),
-     
-       
-      widget.isDisable?  Positioned(
-            left: 0,right: 0,bottom: 0,top: 0,
-            child: Container(color: Colors.transparent,)):SizedBox.shrink()
+        widget.isDisable
+            ? Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                top: 0,
+                child: Container(
+                  color: Colors.transparent,
+                ))
+            : SizedBox.shrink()
       ],
     );
   }
@@ -208,23 +216,29 @@ class _CDatePickerState extends State<CDatePicker> {
                   }(),
                   initialDate: () {
                     try {
-                      return widget.controller.text.length == 10
+                      return  widget.controller.text.length == 10
                           ? DateFormat("dd/MM/yyyy")
                               .parse(widget.controller.text)
-                          : DateTime.now();
+                          : widget.pridictDate.isNotEmpty
+                      ? widget.pridictDate.first: DateTime.now();
                     } catch (e) {
                       // Handle parse exception, return current date as fallback
-                      return DateTime.now();
+                      return widget.pridictDate.isNotEmpty
+                      ? widget.pridictDate.first:DateTime.now();
                     }
                   }(),
-                  firstDate: widget.isBackDate!
-                      ? widget.startDate.toString().length < 10
-                          ? DateTime(1900)
-                          : DateFormat("dd/MM/yyyy").parse(widget.startDate)
-                      : DateTime.now(),
-                  lastDate: widget.isFutureDateDisplay
-                      ? DateTime.now().add(const Duration(days: 36500))
-                      : DateTime.now(),
+                  firstDate: widget.pridictDate.isNotEmpty
+                      ? widget.pridictDate.first
+                      : widget.isBackDate!
+                          ? widget.startDate.toString().length < 10
+                              ? DateTime(1900)
+                              : DateFormat("dd/MM/yyyy").parse(widget.startDate)
+                          : DateTime.now(),
+                  lastDate: widget.pridictDate.isNotEmpty
+                      ? widget.pridictDate.last
+                      : widget.isFutureDateDisplay
+                          ? DateTime.now().add(const Duration(days: 36500))
+                          : DateTime.now(),
                   initialCalendarMode: DatePickerMode.day,
                   onDisplayedMonthChanged: (DateTime newDate) {
                     isMonth = true;
@@ -268,6 +282,24 @@ class _CDatePickerState extends State<CDatePicker> {
                       isMonth = false;
                     });
                   },
+
+                  selectableDayPredicate: (d) =>
+                  widget.pridictDate.isEmpty ||
+                  widget.pridictDate.any((x) =>
+                      x.year == d.year &&
+                      x.month == d.month &&
+                      x.day == d.day),
+               
+                  // selectableDayPredicate: (day) {
+                  //   // print(widget.pridictDate.any((d) =>
+                  //   //     d.year == day.year &&
+                  //   //     d.month == day.month &&
+                  //   //     d.day == day.day));
+                  //   return widget.pridictDate.isEmpty?true: widget.pridictDate.any((d) =>
+                  //           d.year == day.year &&
+                  //           d.month == day.month &&
+                  //           d.day == day.day);
+                  // },
                 ),
               ),
             ),
