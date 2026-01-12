@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppThemeKeys {
   lightGreen,
@@ -677,9 +678,13 @@ DatePickerThemeData _calendarTheme(Color primary, Color font, double s) {
   );
 }
 
+
 class ThemeProvider with ChangeNotifier {
+  static const _themeKeyPref = 'theme_key';
+  static const _fontFamilyPref = 'font_family';
+
   AppThemeKeys _themeKey = AppThemeKeys.coolGrey;
-  String _fontFamily = "Roboto"; // Default font
+  String _fontFamily = 'Roboto';
 
   AppThemeKeys get themeKey => _themeKey;
   String get fontFamily => _fontFamily;
@@ -687,20 +692,61 @@ class ThemeProvider with ChangeNotifier {
   ThemeData getTheme(BuildContext context) =>
       generateThemeData(_themeKey, context, fontFamily: _fontFamily);
 
-  void setTheme(AppThemeKeys key) {
-    if (key != _themeKey) {
-      _themeKey = key;
-      notifyListeners();
-    }
+  /// 🔄 Load saved values
+  Future<void> loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    _themeKey =
+        AppThemeKeys.values[prefs.getInt(_themeKeyPref) ?? _themeKey.index];
+    _fontFamily = prefs.getString(_fontFamilyPref) ?? _fontFamily;
+    notifyListeners();
   }
 
-  void setFontFamily(String font) {
-    if (font != _fontFamily) {
-      _fontFamily = font;
-      notifyListeners();
-    }
+  /// 🎨 Set Theme
+  Future<void> setTheme(AppThemeKeys key) async {
+    if (key == _themeKey) return;
+    _themeKey = key;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt(_themeKeyPref, key.index);
+  }
+
+  /// 🔤 Set Font
+  Future<void> setFontFamily(String font) async {
+    if (font == _fontFamily) return;
+    _fontFamily = font;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(_fontFamilyPref, font);
   }
 }
+
+
+// class ThemeProvider with ChangeNotifier {
+//   AppThemeKeys _themeKey = AppThemeKeys.coolGrey;
+//   String _fontFamily = "Roboto"; // Default font
+
+//   AppThemeKeys get themeKey => _themeKey;
+//   String get fontFamily => _fontFamily;
+
+//   ThemeData getTheme(BuildContext context) =>
+//       generateThemeData(_themeKey, context, fontFamily: _fontFamily);
+
+//   void setTheme(AppThemeKeys key) {
+//     if (key != _themeKey) {
+//       _themeKey = key;
+//       notifyListeners();
+//     }
+//   }
+
+//   void setFontFamily(String font) {
+//     if (font != _fontFamily) {
+//       _fontFamily = font;
+//       notifyListeners();
+//     }
+//   }
+// }
 
 
 // class ThemeProvider1 with ChangeNotifier {
