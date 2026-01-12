@@ -29,7 +29,7 @@ class CHeaderWithChild extends StatelessWidget {
     Widget childWidget = Container(
       constraints: BoxConstraints(minWidth: minChildWidth),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        //color: theme.colorScheme.surface,
         borderRadius: BorderRadius.only(
           topRight: sBorder.borderRadius.topRight,
           bottomRight: sBorder.borderRadius.bottomRight,
