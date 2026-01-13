@@ -59,10 +59,10 @@ class CGroupBox extends StatelessWidget {
           ),
         ),
         // Invisible header for spacing
-        Positioned(
+       Positioned(
           top: -1,
           left: 8,
-          child: Container(
+          child:  headerText.isEmpty?SizedBox.shrink(): Container(
             color: bgColor??AppThemeColors.scaffoldBackground(context),
             height: 2,
             padding: const EdgeInsets.only(
@@ -81,7 +81,7 @@ class CGroupBox extends StatelessWidget {
         Positioned(
           top: -labelFontSize / 1.5,
           left: 6,
-          child: Container(
+          child:  headerText.isEmpty?SizedBox.shrink():Container(
             padding: const EdgeInsets.only(left: 6, right: 2),
             child: Text(
               headerText,

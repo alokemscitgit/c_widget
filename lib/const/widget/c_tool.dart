@@ -1,5 +1,5 @@
 import 'package:c_widget/const/theme/colors.dart';
- 
+
 import 'package:flutter/material.dart';
 import '../c_helper.dart';
 
@@ -70,7 +70,8 @@ class _CToolState extends State<CTool> {
     final bgColor = isDisabled
         ? isDark
             ? Color.fromRGBO(187, 187, 187, 1).withOpacity(0.5)
-            : Color.fromARGB(255, 207, 207, 207) // cs.secondary.withOpacity(0.5).withValues(alpha: 255, red: 1,blue: 100,green: 10)
+            : Color.fromARGB(255, 207, 207,
+                207) // cs.secondary.withOpacity(0.5).withValues(alpha: 255, red: 1,blue: 100,green: 10)
         : isHovering
             ? buttonBg
             : cs.primary.withOpacity(.92);
@@ -92,8 +93,7 @@ class _CToolState extends State<CTool> {
     );
 
     return MouseRegion(
-      cursor:
-          isDisabled ? SystemMouseCursors.basic : SystemMouseCursors.click,
+      cursor: isDisabled ? SystemMouseCursors.basic : SystemMouseCursors.click,
       onEnter: (_) => widget.isHovered && !isDisabled
           ? setState(() => _hover = true)
           : null,
@@ -104,38 +104,46 @@ class _CToolState extends State<CTool> {
         onTap: isDisabled ? null : widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          
           child: Tooltip(
-          textStyle: AppThemeColors.bodySmall(context).copyWith(color: buttonFg),
-           message: (widget.menu == ToolMenuSet.none ||
-            widget.menu == ToolMenuSet.divider ||
-            isDisabled)
-      ? ''
-      : _getText(widget.menu!),
+            textStyle:
+                AppThemeColors.bodySmall(context).copyWith(color: buttonFg),
+            message: (widget.menu == ToolMenuSet.none ||
+                    widget.menu == ToolMenuSet.divider ||
+                    isDisabled)
+                ? ''
+                : _getText(widget.menu!),
             child: Row(
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Icon(
                   _getIcon(widget.menu!),
                   size: (theme.textTheme.bodyLarge?.fontSize ?? 16) * 1.5,
-                  color:
-                       bgColor,
+                  color: bgColor,
                 ),
                 if (widget.isShowText && _getText(widget.menu!).isNotEmpty)
-              isDisabled?SizedBox.shrink():   Row(children: [
-                  SizedBox(width: 1,), Text(
-                    _getText(widget.menu!),
-                    style: theme.textTheme.bodySmall!.copyWith(
-                      color: bgColor,
-                     // fontStyle: FontStyle.italic,
-                      fontSize:
-                          (theme.textTheme.bodySmall!.fontSize ?? 9.4) * .9,
-                      fontWeight:
-                          isHovering ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                 ],
-                 )
+                  isDisabled
+                      ? SizedBox.shrink()
+                      : Row(
+                          children: [
+                            SizedBox(
+                              width: 1,
+                            ),
+                            Text(
+                              _getText(widget.menu!),
+                              style: theme.textTheme.bodySmall!.copyWith(
+                                color: bgColor,
+                                // fontStyle: FontStyle.italic,
+                                fontSize:
+                                    (theme.textTheme.bodySmall!.fontSize ??
+                                            9.4) *
+                                        .9,
+                                fontWeight: isHovering
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        )
               ],
             ),
           ),
@@ -162,7 +170,8 @@ enum ToolMenuSet {
   cancel,
   post,
   export,
-  exit
+  exit,
+  refresh
 }
 
 IconData _getIcon(ToolMenuSet toolMenuSet) {
@@ -197,6 +206,8 @@ IconData _getIcon(ToolMenuSet toolMenuSet) {
       return Icons.download;
     case ToolMenuSet.exit:
       return Icons.close;
+    case ToolMenuSet.refresh:
+      return Icons.autorenew;
 
     default:
       return Icons.help_outline; // Default icon
@@ -234,6 +245,8 @@ String _getText(ToolMenuSet toolMenuSet) {
       return 'Export';
     case ToolMenuSet.cancel:
       return 'Cancel';
+      case ToolMenuSet.refresh:
+      return 'Reload';
 
     default:
       return ''; // Default text
