@@ -519,10 +519,10 @@ TextTheme _textTheme(Color color, double s, {String? fontFamily}) {
   double size(double base) => (base * s).clamp(11, 24);
   return TextTheme(
     bodyLarge:
-        TextStyle(color: color, fontSize: size(13), fontFamily: fontFamily),
+        TextStyle(color: color, fontSize: size(13.5), fontFamily: fontFamily),
     bodyMedium: TextStyle(
         color: color,
-        fontSize: size(10),
+        fontSize: size(10.5),
         fontWeight: FontWeight.w600,
         fontFamily: fontFamily),
     bodySmall:

@@ -141,4 +141,18 @@ class AppThemeColors {
       Theme.of(context).textTheme.titleMedium!;
   static InputDecorationTheme inputDecorationTheme(BuildContext context) =>
       Theme.of(context).inputDecorationTheme;
+
+      static double scale(BuildContext context) {
+    double w = _scale(MediaQuery.of(context).size.width);
+
+    return w;
+  }
+
+ static double _scale(w) {
+    if (w < 700) return 0.9;
+    if (w < 1130) return 0.92;
+    if (w < 1650) return 0.94;
+    if (w < 1920) return 0.96;
+    return .98;
+  }
 }

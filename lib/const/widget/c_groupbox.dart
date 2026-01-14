@@ -3,15 +3,15 @@ import '../c_helper.dart';
 import '../theme/colors.dart';
 
 class CGroupBox extends StatelessWidget {
-  const CGroupBox({
-    super.key,
-    this.headerText = '',
-    this.children = const [SizedBox()],
-    this.borderWidth,
-    this.borderRadius = 8,
-    this.height = 0,
-    this.padding = const EdgeInsets.symmetric(horizontal: 5, vertical: 6),this.bgColor
-  });
+  const CGroupBox(
+      {super.key,
+      this.headerText = '',
+      this.children = const [SizedBox()],
+      this.borderWidth,
+      this.borderRadius = 8,
+      this.height = 0,
+      this.padding = const EdgeInsets.symmetric(horizontal: 5, vertical: 6),
+      this.bgColor,this.labelColor});
 
   final String headerText;
   final List<Widget> children;
@@ -20,6 +20,7 @@ class CGroupBox extends StatelessWidget {
   final double height;
   final EdgeInsets padding;
   final Color? bgColor;
+  final Color? labelColor;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class CGroupBox extends StatelessWidget {
     final sBordr = safeOutlineBorder(context);
     final borderColor = sBordr.borderSide.color;
     final labelStyle = clabelStyle(context, false);
-    final labelFontSize = (labelStyle.fontSize ?? 10) * .8;
+    final labelFontSize =  9 * AppThemeColors.scale(context);
 
     return Stack(
       clipBehavior: Clip.none,
@@ -36,14 +37,14 @@ class CGroupBox extends StatelessWidget {
           height: height > 0 ? height : null,
           padding: padding,
           decoration: BoxDecoration(
-            color: bgColor?? AppThemeColors.scaffoldBackground(context),
+            color: bgColor ?? AppThemeColors.scaffoldBackground(context),
             borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(
+            border: borderWidth==0?null:  Border.all(
               color: borderColor,
               width: borderWidth ?? sBordr.borderSide.width * .8,
             ),
-            boxShadow: [
-              BoxShadow(
+            boxShadow:  borderWidth==0?[]: [
+            BoxShadow(
                 color: AppThemeColors.primary(context),
                 spreadRadius: -3,
                 blurRadius: 3,
@@ -59,38 +60,44 @@ class CGroupBox extends StatelessWidget {
           ),
         ),
         // Invisible header for spacing
-       Positioned(
+        Positioned(
           top: -1,
           left: 8,
-          child:  headerText.isEmpty?SizedBox.shrink(): Container(
-            color: bgColor??AppThemeColors.scaffoldBackground(context),
-            height: 2,
-            padding: const EdgeInsets.only(
-              left: 2,
-            ),
-            child: Text(
-              headerText,
-              style: labelStyle.copyWith(
-                color: Colors.transparent,
-                fontSize: labelFontSize,
-              ),
-            ),
-          ),
+          child: headerText.isEmpty
+              ? SizedBox.shrink()
+              : Container(
+                  color: bgColor ?? AppThemeColors.scaffoldBackground(context),
+                  height: 2,
+                  padding: const EdgeInsets.only(
+                    left: 2,
+                  ),
+                  child: Text(
+                    headerText,
+                    style: labelStyle.copyWith(
+                      color: Colors.transparent,
+                      fontSize: labelFontSize,
+                    ),
+                  ),
+                ),
         ),
         // Visible header
         Positioned(
-          top: -labelFontSize / 1.5,
+          top: -labelFontSize / 1.48,
           left: 6,
-          child:  headerText.isEmpty?SizedBox.shrink():Container(
-            padding: const EdgeInsets.only(left: 6, right: 2),
-            child: Text(
-              headerText,
-              style: labelStyle.copyWith(
-                color: labelStyle.color!.withOpacity(.6),
-                fontSize: labelFontSize,
-              ),
-            ),
-          ),
+          child: headerText.isEmpty
+              ? SizedBox.shrink()
+              : Container(
+                  padding: const EdgeInsets.only(left: 6, right: 2),
+                  child: Text(
+                    headerText,
+                    style: labelStyle.copyWith(
+                      color:labelColor?? labelStyle.color!.withOpacity(.6),
+                      fontSize: labelFontSize,
+                      fontWeight: FontWeight.w600,
+                      fontStyle: FontStyle.italic
+                    ),
+                  ),
+                ),
         ),
       ],
     );
