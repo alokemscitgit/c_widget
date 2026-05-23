@@ -1,3 +1,5 @@
+ 
+
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 
@@ -5,7 +7,7 @@ class CTabButton extends StatefulWidget {
   final bool isCrossButton;
   final String text;
   final Function() buttonClick;
-  final Function() crossButtonClick;
+  final Function()? crossButtonClick;
   final Color? color;
   final Color? textColor;
   final bool isSelected;
@@ -15,7 +17,7 @@ class CTabButton extends StatefulWidget {
     required this.isCrossButton,
     required this.text,
     required this.buttonClick,
-    required this.crossButtonClick,
+      this.crossButtonClick,
     this.color,
     this.isSelected = false,
     this.textColor,
@@ -135,7 +137,7 @@ class _CTabButtonState extends State<CTabButton> {
                       borderRadius: BorderRadius.circular(50),
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
-                      onTap: widget.crossButtonClick,
+                      onTap: ()=>widget.crossButtonClick?.call(),
                       child: Container(
                         padding: const EdgeInsets.all(1),
                         decoration: BoxDecoration(

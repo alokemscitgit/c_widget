@@ -1,8 +1,77 @@
+ 
 
+import 'package:c_widget/const/widget/c_hover_container.dart';
 import 'package:flutter/material.dart';
 
 import '../c_helper.dart';
 import '../theme/colors.dart';
+
+
+// ignore: must_be_immutable
+class CTableGeneratorFaster extends StatelessWidget {
+  CTableGeneratorFaster({
+    super.key,
+    required this.colWidths,
+    required this.headers,
+    required this.rows,
+    Decoration? decorationHeader,
+  });
+  final List<int> colWidths;
+  final List<Widget> headers;
+  final List<TableRow> rows;
+  Decoration? decorationHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    final sBorder = safeOutlineBorder(context);
+    TableBorder border = TableBorder.all(
+        color: sBorder.borderSide.color, width: sBorder.borderSide.width * .5);
+    decorationHeader = decorationHeader ??
+        BoxDecoration(
+          border: Border.all(
+              width: AppThemeColors.borderWidth(context) * .8,
+              color: AppThemeColors(context).borderColor),
+          color: AppThemeColors(context).hoverBg,
+         
+        );
+    final ScrollController _contr = ScrollController();
+    return Column(
+      children: [
+        Table(
+          border: border,
+          columnWidths: _columnWidthFlex(colWidths),
+          children: [
+            TableRow(decoration: decorationHeader, children: headers),
+          ],
+        ),
+        Expanded(
+            child: Scrollbar(
+          controller: _contr,
+          child: ListView.builder(
+              controller: _contr,
+              itemCount: rows.length,
+              itemBuilder: (context, index) {
+                var x = rows[index];
+                return Table(
+                  border: border,
+                  columnWidths: _columnWidthFlex(colWidths),
+                  children: [
+                    x,
+                  ],
+                );
+              }),
+        ))
+      ],
+    );
+  }
+}
+
+
+
+
+
+
+
 
 // ignore: must_be_immutable
 class CustomTableGeneratorFaster extends StatelessWidget {
@@ -22,11 +91,12 @@ class CustomTableGeneratorFaster extends StatelessWidget {
   Widget build(BuildContext context) {
     final sBorder = safeOutlineBorder(context);
     TableBorder border = TableBorder.all(
-        color: sBorder.borderSide.color,
-        width: sBorder.borderSide.width * .5);
+        color: sBorder.borderSide.color, width: sBorder.borderSide.width * .5);
     decorationHeader = decorationHeader ??
         BoxDecoration(
-           border: Border.all( width: AppThemeColors.borderWidth(context) *.6,color: AppThemeColors(context).borderColor ),
+          border: Border.all(
+              width: AppThemeColors.borderWidth(context) * .8,
+              color: AppThemeColors(context).borderColor),
           color: AppThemeColors(context).hoverBg,
           // borderRadius: BorderRadius.only(
           //     topRight:
@@ -117,7 +187,7 @@ class _CustomTableHeaderWeb extends StatelessWidget {
     return Table(
       border: TableBorder.all(
         color: theme.borderColor,
-        width: AppThemeColors.borderWidth(context) * .5,
+        width: AppThemeColors.borderWidth(context) * .8,
       ),
       columnWidths: fixed
           ? columnWidthFixed(
@@ -221,21 +291,27 @@ class CustomTableGenerator extends StatelessWidget {
   }
 }
 
-
-
-
 class CResizableTable extends StatefulWidget {
+  final bool isHoverMusk;
   final List<double>? colwith;
   final List<String> headers;
   final List<List<Widget>> data;
+  final List<AlignmentGeometry>? headerAlign;
   final EdgeInsets? cellPading;
-  const CResizableTable({
-    super.key,
-    this.colwith,
-    this.cellPading,
-    required this.headers,
-    required this.data,
-  });
+  final Color? hoverColor;
+  final Color? headeBgColor;
+   
+  const CResizableTable(
+      {super.key,
+      this.colwith,
+      this.cellPading,
+      this.headerAlign,
+      required this.headers,
+      required this.data,
+      this.isHoverMusk = false,
+      this.hoverColor,
+      this.headeBgColor,
+      t });
 
   @override
   State<CResizableTable> createState() => _CResizableTableState();
@@ -292,9 +368,9 @@ class _CResizableTableState extends State<CResizableTable> {
     var sBoder = safeOutlineBorder(context);
     BoxDecoration decoration = BoxDecoration(
       // border: Border.all( width: AppThemeColors.borderWidth(context) *.6,color: AppThemeColors(context).borderColor ),
-      color: AppThemeColors(context).hoverBg,
+      color: widget.headeBgColor ?? AppThemeColors(context).hoverBg,
       border: Border.all(
-          width: sBoder.borderSide.width * .8, color: sBoder.borderSide.color),
+          width:  .6, color: AppThemeColors.secondary(context) ),
     );
 
     return Row(
@@ -305,11 +381,18 @@ class _CResizableTableState extends State<CResizableTable> {
               width: colWidths[index],
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: decoration,
-              child: Text(
-                widget.headers[index],
-                style: AppThemeColors.bodyMedium(context).copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppThemeColors.primary(context)),
+              child: Align(
+                alignment: widget.headerAlign != null &&
+                        index < widget.headerAlign!.length
+                    ? widget.headerAlign![index]
+                    : Alignment.centerLeft,
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  widget.headers[index],
+                  style: AppThemeColors.bodyMedium(context).copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppThemeColors.primary(context)),
+                ),
               ),
             ),
 
@@ -344,22 +427,37 @@ class _CResizableTableState extends State<CResizableTable> {
       controller: _vScroll,
       itemCount: widget.data.length,
       itemBuilder: (context, rowIndex) {
-        return Row(
-          children: List.generate(widget.data[rowIndex].length, (colIndex) {
-            return Container(
-              width: colWidths[colIndex],
-              padding: widget.cellPading ??
-                  EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                border: Border.all(
-                    width: sBorder.borderSide.width * .5,
-                    color: sBorder.borderSide.color),
-              ),
-              child: widget.data[rowIndex][colIndex],
-            );
-          }),
-        );
+        return widget.isHoverMusk
+            ? CHoverMaskContainer(
+                hoverColor: widget.hoverColor,
+                child:  _row(rowIndex, sBorder),
+              )
+            :  _row(rowIndex, sBorder);
       },
+    );
+  }
+
+  Widget _row(int rowIndex, OutlineInputBorder sBorder) {
+    return IntrinsicHeight(
+      child: Row(
+       crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: List.generate(widget.data[rowIndex].length, (colIndex) {
+          return Container(
+             
+            width: colWidths[colIndex],
+            padding: widget.cellPading ??
+                EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              border: Border.all(
+                  width: sBorder.borderSide.width * .6,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? sBorder.borderSide.color
+                      : AppThemeColors.secondary(context)),
+            ),
+            child: widget.data[rowIndex][colIndex],
+          );
+        }),
+      ),
     );
   }
 }

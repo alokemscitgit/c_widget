@@ -1,4 +1,3 @@
-
 import 'package:c_widget/const/theme/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +10,7 @@ class CTreeLine extends StatelessWidget {
   final bool isLastNode;
   final double lastLineHeight;
   final bool isAutoWidth;
+  
 
   const CTreeLine(
       {super.key,
@@ -20,7 +20,8 @@ class CTreeLine extends StatelessWidget {
       this.connectorTop = 8,
       this.isFirstNode = false,
       this.isLastNode = false,
-      this.lastLineHeight = 14,this.isAutoWidth=false});
+      this.lastLineHeight = 14 ,
+      this.isAutoWidth = false});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class CTreeLine extends StatelessWidget {
               width: 1,
               color: isLastNode
                   ? Colors.transparent
-                  :  AppThemeColors.secondary(context),
+                  : AppThemeColors.secondary(context),
             ),
           ),
 
@@ -54,11 +55,10 @@ class CTreeLine extends StatelessWidget {
                     ))
                 : Positioned(child: SizedBox.shrink()),
             Padding(
-              padding: const EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.only(left: 10.8),
               child: Row(
-
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: isAutoWidth? MainAxisSize.min:MainAxisSize.max,
+                mainAxisSize: isAutoWidth ? MainAxisSize.min : MainAxisSize.max,
                 children: [
                   // Horizontal line
                   Padding(
@@ -66,10 +66,14 @@ class CTreeLine extends StatelessWidget {
                     child: Container(
                       width: 16,
                       height: 1,
-                      color:  AppThemeColors.secondary(context),
+                      color: AppThemeColors.secondary(context),
                     ),
                   ),
-                 isAutoWidth?IntrinsicWidth(child: child,): Expanded(child: child),
+                  isAutoWidth
+                      ? IntrinsicWidth(
+                          child: child,
+                        )
+                      : Expanded(child: child),
                 ],
               ),
             ),

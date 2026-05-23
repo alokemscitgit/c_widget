@@ -16,7 +16,7 @@ class CTool extends StatefulWidget {
     this.isHovered = true,
     this.isDisable = false,
     this.onTap,
-    this.isShowText = true,
+    this.isShowText = false,
     this.borderRadius = 4,
     this.padding = const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
   });
@@ -92,65 +92,85 @@ class _CToolState extends State<CTool> {
       blurRadius: isHovering ? 3 : 2,
     );
 
+final tooltipText = (widget.menu == ToolMenuSet.none ||
+        widget.menu == ToolMenuSet.divider ||
+        isDisabled)
+    ? null
+    : _getText(widget.menu!);
+
+
     return MouseRegion(
       cursor: isDisabled ? SystemMouseCursors.basic : SystemMouseCursors.click,
-      onEnter: (_) => widget.isHovered && !isDisabled
-          ? setState(() => _hover = true)
-          : null,
-      onExit: (_) => widget.isHovered && !isDisabled
-          ? setState(() => _hover = false)
-          : null,
+      onEnter: (_) {
+  if (!mounted || !widget.isHovered || isDisabled) return;
+  setState(() => _hover = true);
+},
+
+onExit: (_) {
+  if (!mounted || !widget.isHovered || isDisabled) return;
+  setState(() => _hover = false);
+},
       child: GestureDetector(
         onTap: isDisabled ? null : widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          child: Tooltip(
-            textStyle:
-                AppThemeColors.bodySmall(context).copyWith(color: buttonFg),
-            message: (widget.menu == ToolMenuSet.none ||
-                    widget.menu == ToolMenuSet.divider ||
-                    isDisabled)
-                ? ''
-                : _getText(widget.menu!),
-            child: Row(
-              // crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Icon(
-                  _getIcon(widget.menu!),
-                  size: (theme.textTheme.bodyLarge?.fontSize ?? 16) * 1.5,
-                  color: bgColor,
-                ),
-                if (widget.isShowText && _getText(widget.menu!).isNotEmpty)
-                  isDisabled
-                      ? SizedBox.shrink()
-                      : Row(
-                          children: [
-                            SizedBox(
-                              width: 1,
-                            ),
-                            Text(
-                              _getText(widget.menu!),
-                              style: theme.textTheme.bodySmall!.copyWith(
-                                color: bgColor,
-                                // fontStyle: FontStyle.italic,
-                                fontSize:
-                                    (theme.textTheme.bodySmall!.fontSize ??
-                                            9.4) *
-                                        .9,
-                                fontWeight: isHovering
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                              ),
-                            ),
-                          ],
-                        )
-              ],
-            ),
-          ),
+          child: tooltipText == null
+    ? Row(
+        children: _buildContent(theme, bgColor, isHovering),
+      )
+    : Tooltip(
+        message: tooltipText,
+        waitDuration: const Duration(milliseconds: 300),
+        showDuration: const Duration(seconds: 2),
+        textStyle: AppThemeColors.bodySmall(context)
+            .copyWith(color: buttonFg),
+        decoration: BoxDecoration(
+          color: Colors.black87,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Row(
+          children: _buildContent(theme, bgColor, isHovering),
+        ),
+      ),
         ),
       ),
     );
   }
+
+
+List<Widget> _buildContent(
+  ThemeData theme,
+  Color bgColor,
+  bool isHovering,
+) {
+  return [
+    Icon(
+      _getIcon(widget.menu!),
+      size: (theme.textTheme.bodyLarge?.fontSize ?? 16) * 1.5,
+      color: bgColor,
+    ),
+
+    if (widget.isShowText &&
+        _getText(widget.menu!).isNotEmpty)
+      Row(
+        children: [
+          const SizedBox(width: 1),
+          Text(
+            _getText(widget.menu!),
+            style: theme.textTheme.bodySmall!.copyWith(
+              color: bgColor,
+              fontSize:
+                  (theme.textTheme.bodySmall!.fontSize ?? 9.4) *
+                      .9,
+              fontWeight:
+                  isHovering ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+  ];
+}
+
 }
 
 enum ToolMenuSet {

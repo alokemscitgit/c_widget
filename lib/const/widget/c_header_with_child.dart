@@ -1,17 +1,18 @@
-
 import 'package:flutter/material.dart';
 
 import '../c_helper.dart';
+
 class CHeaderWithChild extends StatelessWidget {
-  const CHeaderWithChild({
-    super.key,
-    required this.caption,
-    required this.child,
-    this.capWidth,
-    this.minChildWidth = 0,
-    this.backgroundColor,
-    this.expandChild = false,
-  });
+  const CHeaderWithChild(
+      {super.key,
+      required this.caption,
+      required this.child,
+      this.capWidth,
+      this.minChildWidth = 0,
+      this.backgroundColor,
+      this.expandChild = false,
+      this.borderWidth,
+      this.borderColor,this.isCloneSymbole=false,this.capColor});
 
   final String caption;
   final Widget child;
@@ -19,12 +20,15 @@ class CHeaderWithChild extends StatelessWidget {
   final double minChildWidth;
   final Color? backgroundColor;
   final bool expandChild;
-
+  final double? borderWidth;
+  final Color? borderColor;
+  final Color? capColor;
+  final bool isCloneSymbole;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final sBorder = safeOutlineBorder(context);
-    final borderColor = sBorder.borderSide.color;
+    final borderColor1 = sBorder.borderSide.color;
 
     Widget childWidget = Container(
       constraints: BoxConstraints(minWidth: minChildWidth),
@@ -43,17 +47,17 @@ class CHeaderWithChild extends StatelessWidget {
       childWidget = Flexible(fit: FlexFit.tight, child: childWidget);
     }
 
-    return 
-    
-    IntrinsicHeight(
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
+    return IntrinsicHeight(
+        child: Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         /// Caption area
         Container(
           width: capWidth,
-       //   constraints: const BoxConstraints(maxHeight: 28),
-          padding: const EdgeInsets.symmetric(horizontal: 6,),
+          //   constraints: const BoxConstraints(maxHeight: 28),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 6,
+          ),
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
             color: backgroundColor ?? theme.colorScheme.surfaceVariant,
@@ -61,12 +65,18 @@ class CHeaderWithChild extends StatelessWidget {
               topLeft: sBorder.borderRadius.topLeft,
               bottomLeft: sBorder.borderRadius.bottomLeft,
             ),
-            border: Border.all(color: borderColor, width: 0.8),
+            border: Border.all(
+                color: borderColor ?? borderColor1, width: borderWidth ?? 0.8),
           ),
-          child: Text(
-            caption,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodyMedium,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                caption,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyMedium!.copyWith(color: capColor),
+              ),isCloneSymbole?Text(': ',style: theme.textTheme.bodyMedium!.copyWith(color: capColor),  overflow: TextOverflow.ellipsis,):SizedBox.shrink()
+            ],
           ),
         ),
 

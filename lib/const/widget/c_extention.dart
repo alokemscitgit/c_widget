@@ -1,4 +1,3 @@
- 
 import 'package:flutter/material.dart';
 import '../c_helper.dart';
 import '../theme/colors.dart';
@@ -6,12 +5,16 @@ import '../theme/colors.dart';
 class HeaderTextBuilder {
   final String text;
   Alignment _alignment = Alignment.centerLeft;
-  Color _color = Colors.black;
+  Color? _color = null;
   double _fontSize = 12;
   FontWeight _fontWeight = FontWeight.bold;
   Color _bgColor = Colors.transparent;
   EdgeInsets _padding = const EdgeInsets.symmetric(horizontal: 6, vertical: 4);
   bool _showToolTip = false;
+ Color? _borderRightColor ;
+  double? _borderRightWidth;
+
+
   HeaderTextBuilder(this.text);
   // -------- alignment shortcuts --------
   HeaderTextBuilder get center {
@@ -116,7 +119,14 @@ class HeaderTextBuilder {
 //       bgColor: _bgColor,
     return this;
   }
-
+  HeaderTextBuilder  borderRightColor(Color color) {
+    _borderRightColor = color;
+    return this;
+  }
+  HeaderTextBuilder  borderRightWidth(double weidth) {
+    _borderRightWidth = weidth;
+    return this;
+  }
   // -------- build --------
   CustomTableColumnHeaderBlackNew build() {
     return CustomTableColumnHeaderBlackNew(
@@ -127,7 +137,7 @@ class HeaderTextBuilder {
       fontWeight: _fontWeight,
       bgColor: _bgColor,
       padding: _padding,
-      IsShowToolTip: _showToolTip,
+      IsShowToolTip: _showToolTip,borderRightColor: _borderRightColor,borderRightWidth: _borderRightWidth,
     );
   }
 
@@ -297,8 +307,8 @@ class TableCellTextBuilder {
     _fontColor = (AppThemeColors.bodyMedium(context).color as Color);
     _fontSize = AppThemeColors.bodyMedium(context).fontSize ?? 9.5;
     _fontWeight = AppThemeColors.bodyMedium(context).fontWeight!;
-   _borderColor = safeOutlineBorder(context).borderSide.color;
-     _borderWidth =  safeOutlineBorder(context).borderSide.width;
+    _borderColor = safeOutlineBorder(context).borderSide.color;
+    _borderWidth = safeOutlineBorder(context).borderSide.width;
     return this;
   }
 
@@ -306,8 +316,8 @@ class TableCellTextBuilder {
     _fontColor = (AppThemeColors.bodyLarge(context).color as Color);
     _fontSize = AppThemeColors.bodyLarge(context).fontSize ?? 9.5;
     _fontWeight = AppThemeColors.bodyLarge(context).fontWeight!;
-   _borderColor = safeOutlineBorder(context).borderSide.color;
-     _borderWidth =  safeOutlineBorder(context).borderSide.width;
+    _borderColor = safeOutlineBorder(context).borderSide.color;
+    _borderWidth = safeOutlineBorder(context).borderSide.width;
     return this;
   }
 
@@ -316,7 +326,7 @@ class TableCellTextBuilder {
     _fontSize = AppThemeColors.bodySmall(context).fontSize ?? 9.5;
     _fontWeight = AppThemeColors.bodySmall(context).fontWeight!;
     _borderColor = safeOutlineBorder(context).borderSide.color;
-     _borderWidth =  safeOutlineBorder(context).borderSide.width;
+    _borderWidth = safeOutlineBorder(context).borderSide.width;
 //       bgColor: _bgColor,
     return this;
   }
@@ -361,7 +371,9 @@ class CustomTableColumnHeaderBlackNew extends StatelessWidget {
   EdgeInsets padding;
   bool IsShowToolTip;
   Color bgColor;
-  Color textColor;
+  Color? textColor;
+  Color? borderRightColor;
+  double? borderRightWidth;
 
   CustomTableColumnHeaderBlackNew({
     super.key,
@@ -373,42 +385,59 @@ class CustomTableColumnHeaderBlackNew extends StatelessWidget {
     this.bgColor = Colors.transparent,
     this.textColor = Colors.black,
     this.padding = const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+    this.borderRightColor,this.borderRightWidth
   });
 
   @override
   Widget build(BuildContext context) {
+    Color colotH = AppThemeColors.secondary(context);
     return TableCell(
       verticalAlignment: TableCellVerticalAlignment.middle,
       child: IsShowToolTip
           ? Tooltip(
               message: text,
-              child: __headerContainer(text, alignment, fontSize, fontWeight,
-                  padding, bgColor, textColor),
+              child: __headerContainer(
+                  text, alignment, fontSize, fontWeight, padding,
+                  bgColor: bgColor, textColor: textColor ?? colotH,borderRightColor: borderRightColor,borderRightWidth: borderRightWidth),
             )
           : __headerContainer(text, alignment, fontSize, fontWeight, padding,
-              bgColor, textColor),
+              bgColor: bgColor, textColor: textColor ?? colotH),
     );
   }
 }
 
 __headerContainer(String text, AlignmentGeometry alignment, double fontSize,
         FontWeight fontWeight, EdgeInsets padding,
-        [Color bgColor = Colors.transparent, Color textColor = Colors.black]) =>
-    Container(
-      color: bgColor,
-      alignment: alignment,
-      padding: padding,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontWeight: fontWeight,
-          // fontFamily: appFontLato,
-          fontSize: fontSize,
-          color: textColor,
-          overflow: TextOverflow.ellipsis,
+        {Color bgColor = Colors.transparent,
+        Color textColor = Colors.black,
+        Color? borderRightColor = null,
+        double? borderRightWidth = null}) =>
+    Builder(builder: (context) {
+      Color colotH = AppThemeColors.secondary(context);
+      return Container(
+        // color: bgColor,
+        decoration: BoxDecoration(
+          color: bgColor,
+          border: Border(
+            right: BorderSide(
+                color: borderRightColor ?? colotH,
+                width: borderRightWidth ?? 0.6),
+          ),
         ),
-      ),
-    );
+        alignment: alignment,
+        padding: padding,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: fontWeight,
+            // fontFamily: appFontLato,
+            fontSize: fontSize,
+            color: textColor,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      );
+    });
 
 class CustomTableCellx extends StatelessWidget {
   final String text;
@@ -460,7 +489,7 @@ class CustomTableCellx extends StatelessWidget {
         decoration: BoxDecoration(
           color: bgColor,
           border: Border(
-            right: BorderSide(color: borderColor, width: borderWidth *0.5),
+            right: BorderSide(color: borderColor, width: borderWidth * 0.5),
           ),
         ),
         child: LayoutBuilder(
@@ -561,7 +590,6 @@ class CustomTableCellx extends StatelessWidget {
     );
   }
 }
-
 
 extension SizedBoxExtensions on num {
   /// Returns a SizedBox with width equal to this value

@@ -27,4 +27,6 @@ export 'const/widget/c_front_page.dart';
 export 'const/c_helper.dart';
 export 'const/widget/c_tab_menu_bar.dart';
 export 'const/widget/c_tree_line.dart';
+export 'const/widget/c_searchable_overlay.dart';
+export 'const/widget/c_overlay.dart';
 //All widget

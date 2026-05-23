@@ -14,8 +14,8 @@ class CExpandedPanel extends StatefulWidget {
       this.isExpanded = true,
       this.borderRadius,
       this.splashColor,
-      this.openIcon = Icons.folder_open_sharp,
-      this.closeIcon = Icons.folder,
+      this.openIcon = Icons.indeterminate_check_box_outlined,
+      this.closeIcon = Icons.add_box_outlined,
       this.isLeadingIcon = false,
       this.isSurfixIcon = true,
       this.isSelectedColor = true,
@@ -24,7 +24,10 @@ class CExpandedPanel extends StatefulWidget {
       this.selectedTitleColor,
       this.isExpandRow = true,
       this.onTap,
-      this.isSplashColor = true});
+      this.isSplashColor = true,
+      this.selecteIconColor,
+      this.firstNodeGapFromTitle = 0,
+      this.titlePadding});
 
   final Widget Function(bool expanded) titleBuilder;
   final List<Widget> children;
@@ -42,6 +45,9 @@ class CExpandedPanel extends StatefulWidget {
   final bool isExpandRow;
   final void Function(bool b)? onTap;
   final bool isSplashColor;
+  final Color? selecteIconColor;
+  final double firstNodeGapFromTitle;
+  final EdgeInsets? titlePadding;
 
   @override
   State<CExpandedPanel> createState() => _CExpandedPanelState();
@@ -114,18 +120,22 @@ class _CExpandedPanelState extends State<CExpandedPanel>
                 ? BoxDecoration(
                     borderRadius:
                         BorderRadius.circular(widget.borderRadius ?? 8),
-                    color:
-                        widget.splashColor ?? AppThemeColors(context).hoverBg,
+                    color: widget.splashColor == null
+                        ? widget.selectedTitleColor
+                        : AppThemeColors(context).hoverBg,
                     boxShadow: [
                       BoxShadow(
                           blurRadius: 3,
-                          spreadRadius: 1,
+                          spreadRadius: 0,
                           color: widget.selectedTitleColor ??
                               AppThemeColors(context).borderColor)
                     ],
                   )
                 : null,
-            padding: const EdgeInsets.only(left: 4, top: 1, bottom: 1),
+            padding: widget.titlePadding ??
+                const EdgeInsets.only(
+                  left: 4,
+                ),
             child: Row(
               children: [
                 if (widget.isLeadingIcon)
@@ -134,7 +144,9 @@ class _CExpandedPanelState extends State<CExpandedPanel>
                       Icon(
                         _isExpanded ? widget.openIcon : widget.closeIcon,
                         size: widget.iconSize ?? 18,
-                        color: iconColor,
+                        color: _isExpanded
+                            ? widget.selecteIconColor ?? iconColor
+                            : iconColor,
                       ),
                       const SizedBox(width: 6),
                     ],
@@ -164,7 +176,12 @@ class _CExpandedPanelState extends State<CExpandedPanel>
           child: _isExpanded
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: widget.children,
+                  children: [
+                  widget.firstNodeGapFromTitle==0?SizedBox.shrink():  SizedBox(
+                      height: widget.firstNodeGapFromTitle,
+                    ),
+                    ...widget.children
+                  ],
                 )
               : const SizedBox(),
         ),
@@ -176,6 +193,7 @@ class _CExpandedPanelState extends State<CExpandedPanel>
 class CTreeNode extends StatelessWidget {
   final double leftPad;
   final String title;
+  final Color? titleColor;
   final List<Widget> children;
 
   final double? textSize;
@@ -192,11 +210,14 @@ class CTreeNode extends StatelessWidget {
   final bool? isSpashColor;
   final void Function(BuildContext context, Offset position)? onRightClick;
   final Widget? contextMenu;
-
+  final bool? isAnimatedSelected;
+  final Color? animatedColor;
+  final double spaseBetwwenTitleAndContectMenu;
   const CTreeNode(
       {super.key,
-      required this.leftPad,
+        this.leftPad=0,
       required this.title,
+      this.titleColor,
       required this.children,
       this.textSize,
       this.isExpanded = false,
@@ -206,14 +227,22 @@ class CTreeNode extends StatelessWidget {
       this.isSelectedColor = false,
       this.paddingTop = 0,
       this.trailing = const SizedBox(),
-      this.openIcon = Icons.folder_open_sharp,
-      this.closeIcon = Icons.folder,
+      this.openIcon = Icons.indeterminate_check_box_outlined,
+      this.closeIcon = Icons.add_box_outlined,
       this.iconSize,
       this.isSpashColor,
-      this.onRightClick,this.contextMenu});
+      this.onRightClick,
+      this.contextMenu,
+      this.isAnimatedSelected = false,
+      this.animatedColor,
+      this.spaseBetwwenTitleAndContectMenu = 12});
 
   @override
   Widget build(BuildContext context) {
+    Color tColor = titleColor ??
+    Theme.of(context).textTheme.bodyMedium?.color ??
+    Colors.black;
+
     return Padding(
       padding: EdgeInsets.only(
         left: leftPad,
@@ -221,6 +250,7 @@ class CTreeNode extends StatelessWidget {
         top: paddingTop,
       ),
       child: CExpandedPanel(
+        //firstNodeGapFromTitle: 10,
         openIcon: openIcon,
         closeIcon: closeIcon,
         isSelectedColor: isSelectedColor,
@@ -239,35 +269,80 @@ class CTreeNode extends StatelessWidget {
                 onRightClick?.call(context, event.position);
               }
             },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Stack(
               children: [
-                Flexible(
-                  child: CHoverMaskContainer(
-        
-                    hoverColor:  isSpashColor==false?Colors.transparent:AppThemeColors.primary(context).withAlpha(5),
-                    child: Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            title,
-                            overflow: TextOverflow.ellipsis,
-                            style: !expanded
-                                ? AppThemeColors.bodyMedium(context).copyWith(
-                                    color: AppThemeColors.secondary(context),
-                                    fontSize:
-                                        textSize ?? AppThemeColors.fontSize(context))
-                                : AppThemeColors.bodyMedium(context).copyWith(
-                                    fontSize:
-                                        textSize ?? AppThemeColors.fontSize(context)),
+                expanded && isAnimatedSelected == true
+                    ? Positioned.fill(
+                        child: AnimatedSlide(
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.easeOutCubic,
+                          offset: expanded
+                              ? const Offset(0, 0)
+                              : const Offset(-1, 0),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 350),
+                            curve: Curves.easeOutCubic,
+                            decoration: BoxDecoration(
+                              color: expanded
+                                  ? animatedColor ??
+                                      AppThemeColors(context).selectedBg
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
-                        contextMenu!=null?Row(children: [SizedBox(width: 12,), contextMenu!],):SizedBox.shrink()
-                      ],
+                      )
+                    : SizedBox.shrink(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: CHoverMaskContainer(
+                        hoverColor: isSpashColor == false
+                            ? Colors.transparent
+                            : AppThemeColors.primary(context).withAlpha(5),
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                title,
+                                overflow: TextOverflow.ellipsis,
+                                style: !expanded
+                                    ? AppThemeColors.bodyMedium(context)
+                                        .copyWith(
+                                          color: tColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: textSize ??
+                                                AppThemeColors.fontSize(
+                                                    context))
+                                    : AppThemeColors.bodyMedium(context)
+                                        .copyWith(
+                                          color: tColor,
+                                            // color: AppThemeColors.secondary(
+                                            //     context),
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: textSize ??
+                                                AppThemeColors.fontSize(
+                                                    context)),
+                              ),
+                            ),
+                            contextMenu != null
+                                ? Row(
+                                    children: [
+                                      SizedBox(
+                                        width: spaseBetwwenTitleAndContectMenu,
+                                      ),
+                                      contextMenu!
+                                    ],
+                                  )
+                                : SizedBox.shrink()
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                    trailing,
+                  ],
                 ),
-                trailing,
               ],
             ),
           );

@@ -35,7 +35,7 @@ class _CHoverMaskContainerState extends State<CHoverMaskContainer> {
           borderRadius: BorderRadius.circular(widget.borderRadious),
           color: isHover
               ? (widget.hoverColor ??
-                  AppThemeColors.primary(context).withAlpha(5))
+                (( Theme.of(context).brightness == Brightness.dark)==true?AppThemeColors.secondary(context).withOpacity(0.15):   AppThemeColors.primary(context).withAlpha(5)))
               : Colors.transparent,
         ),
         child: widget.child,

@@ -1,3 +1,4 @@
+ 
 
 import 'package:c_widget/const/c_helper.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class CTextBox extends StatefulWidget {
   void Function(String v)? onChange;
   void Function(String) onSubmitted;
   void Function() onEditingComplete;
+  void Function()? onTap;
   FocusNode? focusNode;
   bool isCapitalization;
   bool iSAutoCorrected;
@@ -33,6 +35,9 @@ class CTextBox extends StatefulWidget {
   bool issuffixIcon;
   IconData? suffixIcon;
   BorderRadius? borderRadious;
+  bool isAutofocus;
+  TextStyle? labelStyle;
+  TextStyle? textStyle;
   CTextBox(
       {super.key,
       this.label = '',
@@ -57,7 +62,11 @@ class CTextBox extends StatefulWidget {
       this.isAutoValidate = false,
       this.isError = false,
       this.isSearchBox = false,
-      this.borderRadious,this.issuffixIcon=false,this.suffixIcon})
+      this.borderRadious,
+      this.issuffixIcon = false,
+      this.isAutofocus = false,
+      this.suffixIcon,
+      this.labelStyle,this.textStyle,this.onTap})
       : onSubmitted = onSubmitted ?? ((String v) {}),
         onEditingComplete = onEditingComplete ?? (() {});
 
@@ -70,10 +79,11 @@ class _CTextBoxState extends State<CTextBox> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final inputTheme = theme.inputDecorationTheme;
-final resolved = (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 12 ))
-        .resolve(Directionality.of(context));
+    final resolved =
+        (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 12))
+            .resolve(Directionality.of(context));
     final scaled = resolved.copyWith(
-      right: widget.issuffixIcon? 0:4,
+      right: widget.issuffixIcon ? 0 : 4,
     );
     bool isObsText = false;
     if (widget.isAutoValidate) {
@@ -98,7 +108,7 @@ final resolved = (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 
     return BlocProvider(
       create: (context) => PasswordShowBloc(),
       child: CHoverMaskContainer(
-         hoverColor: widget.isDisable? Colors.transparent:null,
+        hoverColor: widget.isDisable ? Colors.transparent : null,
         child: SizedBox(
           width: widget.width,
           height: widget.height,
@@ -108,7 +118,7 @@ final resolved = (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 
                 isObsText = state.isShow;
               }
               return TextField(
-                
+                autofocus: widget.isAutofocus,
                 textInputAction: widget.textInputType == TextInputType.multiline
                     ? null
                     : TextInputAction.next,
@@ -136,6 +146,7 @@ final resolved = (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 
                 onEditingComplete: () {
                   widget.onEditingComplete();
                 },
+                onTap: () => widget.onTap?.call(),
                 keyboardType: widget.textInputType,
                 obscureText: !isObsText ? widget.isPassword : false,
                 inputFormatters: widget.isCapitalization
@@ -163,28 +174,29 @@ final resolved = (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 
                                       ],
                 maxLength: widget.maxlength,
                 maxLines: widget.maxLine,
-                style: theme.textTheme.bodyMedium!.copyWith(),
+                style: widget.textStyle?? theme.textTheme.bodyMedium!.copyWith(),
                 textAlignVertical: TextAlignVertical.center,
                 textAlign: widget.textAlign!,
                 decoration: InputDecoration(
                   hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
-       // fillColor: Colors.white,
-        filled: true,
+                  focusColor: Colors.transparent,
+                  // fillColor: Colors.white,
+                  filled: true,
                   fillColor: widget.isDisable
                       ? Colors
                           .grey[theme.brightness == Brightness.dark ? 600 : 50]
                       : inputTheme.fillColor,
-                 // focusColor: Colors.white,
+                  // focusColor: Colors.white,
                   labelText: widget.label,
-                  labelStyle: clabelStyle(context, widget.isError),
+                  labelStyle:
+                      widget.labelStyle ?? clabelStyle(context, widget.isError),
                   // labelStyle: widget.isError
                   //     ? inputTheme.labelStyle!.copyWith(color: Colors.red)
                   //     : inputTheme.labelStyle!.copyWith(
                   //         color: inputTheme.labelStyle!.color!.withOpacity(.6)
                   //         ),
                   hintText: widget.hintText,
-        
+
                   hintStyle: theme.textTheme.labelSmall,
                   counterText: '',
                   border: CBorders.border(
@@ -208,37 +220,42 @@ final resolved = (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 
                                 .add(PasswordShowSetEvent(isShow: !isObsText));
                           },
                           child: Icon(
-                            !isObsText ? Icons.visibility_off : Icons.visibility,
-                            size: (((theme.textTheme.bodyLarge!.fontSize) ?? 16) *
-                                1.2),
+                            !isObsText
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            size:
+                                (((theme.textTheme.bodyLarge!.fontSize) ?? 16) *
+                                    1.2),
                             color: theme.colorScheme.secondary,
                           ),
                         )
-                      : widget.issuffixIcon? MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: Icon(
-                              widget.suffixIcon??  Icons.keyboard_arrow_down,
-                              size: (((theme.textTheme.bodyLarge!.fontSize) ?? 16) *
-                                  1.5),
-                              color: theme.colorScheme.secondary,
-                            ),
-                      ):null,
+                      : widget.issuffixIcon
+                          ? MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Icon(
+                                widget.suffixIcon ?? Icons.keyboard_arrow_down,
+                                size: (((theme.textTheme.bodyLarge!.fontSize) ??
+                                        16) *
+                                    1.5),
+                                color: theme.colorScheme.secondary,
+                              ),
+                            )
+                          : null,
                   prefixIcon: widget.isSearchBox
                       ? Icon(
                           Icons.search_rounded,
-                          size: (((theme.textTheme.bodyLarge!.fontSize) ?? 16) *
-                              1.5),
+                          size: (((theme.textTheme.bodyLarge!.fontSize) ?? 14) *
+                              1.2),
                           color: theme.colorScheme.secondary,
                         )
                       : null,
-                  contentPadding:resolved,
+                  contentPadding: resolved,
                   //const EdgeInsets.only(
                   //    // bottom: 6,
                   //   // top: 2,
                   //     left: 8,
                   //     right: 8)
                 ),
-                
                 controller: widget.controller,
               );
             },

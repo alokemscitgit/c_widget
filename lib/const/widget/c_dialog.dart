@@ -60,125 +60,128 @@ Future<void> CDialog(
       );
 
       return Center(
-        child: AlertDialog(
-          insetPadding: EdgeInsets.zero,
-          elevation: 3,
-          clipBehavior: Clip.none, // IMPORTANT
-          scrollable: scrollable,
-          backgroundColor:
-              backgroundColor ?? theme.scaffoldBackgroundColor.withOpacity(0.9),
-          surfaceTintColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadious),
-          ),
-          contentPadding: EdgeInsets.zero,
-          actionsPadding: EdgeInsets.only(bottom: 2,right: 4),
-
-          title: Stack(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18,vertical: 8),
+          child: AlertDialog(
+            insetPadding: EdgeInsets.zero,
+            elevation: 3,
             clipBehavior: Clip.none, // IMPORTANT
-            children: [
-              // Header background
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: headerBgColor,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(borderRadious),
+            scrollable: scrollable,
+            backgroundColor:
+                backgroundColor ?? theme.scaffoldBackgroundColor.withOpacity(0.9),
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadious),
+            ),
+            contentPadding: EdgeInsets.zero,
+            actionsPadding: EdgeInsets.only(bottom: 2,right: 4),
+          
+            title: Stack(
+              clipBehavior: Clip.none, // IMPORTANT
+              children: [
+                // Header background
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: headerBgColor,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(borderRadious),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 6,
+                              spreadRadius: 0,
+                            ),
+                          ],
                         ),
+                        padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4)
+                            .copyWith(right: 28),
+                        child: Text(
+                          overflow: TextOverflow.ellipsis,
+                          title,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            overflow: TextOverflow.ellipsis,
+                            fontStyle: isItalicTitle ? FontStyle.italic : null,
+                            color: headerTextColor, //fontWeight: FontWeight.w500
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+          
+                // Close button OUTSIDE dialog
+                Positioned(
+                  right: -10,
+                  top: -3.5,
+                  child: InkWell(
+                    //  behavior: HitTestBehavior.opaque, // FULL clickable area
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      onClose?.call();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(5), // enlarge tap area
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        // borderRadius: BorderRadius.only(topRight: Radius.circular(50),bottomRight: Radius.circular(50)),
+                        color: AppThemeColors.secondary(context).withOpacity(0.5),
+                        // border: Border.all(color:safeOutlineBorder(context).borderSide.color )
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 6,
-                            spreadRadius: 0,
-                          ),
+                            blurRadius: 2,
+                            //  spreadRadius: -2,
+                            color: safeOutlineBorder(context)
+                                .borderSide
+                                .color
+                                .withOpacity(0.5),
+                          )
                         ],
                       ),
-                      padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 4)
-                          .copyWith(right: 28),
-                      child: Text(
-                        overflow: TextOverflow.ellipsis,
-                        title,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          overflow: TextOverflow.ellipsis,
-                          fontStyle: isItalicTitle ? FontStyle.italic : null,
-                          color: headerTextColor, //fontWeight: FontWeight.w500
-                        ),
-                      ),
+                      child: CHoverIcon(
+                          icon: Icons.close,
+                          size: 20,
+                          iconColor: AppThemeColors(context).normalText,
+                          iconHoverColor: theme.colorScheme.error,
+                          hoverSize: 20),
                     ),
                   ),
-                ],
-              ),
-
-              // Close button OUTSIDE dialog
-              Positioned(
-                right: -10,
-                top: -3.5,
-                child: InkWell(
-                  //  behavior: HitTestBehavior.opaque, // FULL clickable area
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    onClose?.call();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(5), // enlarge tap area
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      // borderRadius: BorderRadius.only(topRight: Radius.circular(50),bottomRight: Radius.circular(50)),
-                      color: AppThemeColors.secondary(context).withOpacity(0.5),
-                      // border: Border.all(color:safeOutlineBorder(context).borderSide.color )
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 2,
-                          //  spreadRadius: -2,
-                          color: safeOutlineBorder(context)
-                              .borderSide
-                              .color
-                              .withOpacity(0.5),
-                        )
-                      ],
-                    ),
-                    child: CHoverIcon(
-                        icon: Icons.close,
-                        size: 20,
-                        iconColor: AppThemeColors(context).normalText,
-                        iconHoverColor: theme.colorScheme.error,
-                        hoverSize: 20),
-                  ),
+                ),
+              ],
+            ),
+          
+            titlePadding: EdgeInsets.zero,
+          
+            content: bodyContent,
+          
+            actions: [
+              if (isSaveButton)
+                TextButton(
+                  style: _bs,
+                  key: buttonKey,
+                  onPressed: onButtonPressed,
+                  child: Text(saveButtonText ?? "Save",
+                      style: theme.textTheme.bodySmall!
+                          .copyWith(fontWeight: FontWeight.w600)),
+                ),
+              TextButton(
+                 style: _bs,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onClose?.call();
+                },
+                child: Text(
+                  "Close",
+                  style: theme.textTheme.bodySmall!
+                      .copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
             ],
           ),
-
-          titlePadding: EdgeInsets.zero,
-
-          content: bodyContent,
-
-          actions: [
-            if (isSaveButton)
-              TextButton(
-                style: _bs,
-                key: buttonKey,
-                onPressed: onButtonPressed,
-                child: Text(saveButtonText ?? "Save",
-                    style: theme.textTheme.bodySmall!
-                        .copyWith(fontWeight: FontWeight.w600)),
-              ),
-            TextButton(
-               style: _bs,
-              onPressed: () {
-                Navigator.of(context).pop();
-                onClose?.call();
-              },
-              child: Text(
-                "Close",
-                style: theme.textTheme.bodySmall!
-                    .copyWith(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
         ),
       );
     },

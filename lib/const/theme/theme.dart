@@ -24,8 +24,8 @@ ThemeData generateThemeData(
 
   // Define dynamic font scale by device type
   final scale = switch (deviceType) {
-    DeviceType.mobile => 0.9,
-    DeviceType.tablet => .94,
+    DeviceType.mobile => 0.92,
+    DeviceType.tablet => .95,
     DeviceType.desktop => 1.0,
   };
 
@@ -207,7 +207,15 @@ ThemeData _darkTheme(double s, String? fontFamily) {
     iconTheme: const IconThemeData(
       color: Color.fromARGB(255, 252, 198, 118),
       size: 20,
+
+      
     ),
+     dividerTheme: DividerThemeData(
+      color: const Color.fromARGB(255, 230, 228, 228),
+      thickness: 1,
+      space: 12,
+    ),
+
   );
 }
 
@@ -516,17 +524,17 @@ ThemeData _tinyGreenTheme(double s, String? fontFamily) {
 }
 
 TextTheme _textTheme(Color color, double s, {String? fontFamily}) {
-  double size(double base) => (base * s).clamp(11, 24);
+  double size(double base) => (base * s).clamp(11.1, 24);
   return TextTheme(
     bodyLarge:
-        TextStyle(color: color, fontSize: size(13.5), fontFamily: fontFamily),
+        TextStyle(color: color, fontSize: size(14), fontFamily: fontFamily),
     bodyMedium: TextStyle(
         color: color,
-        fontSize: size(10.5),
+        fontSize: size(13),
         fontWeight: FontWeight.w600,
         fontFamily: fontFamily),
     bodySmall:
-        TextStyle(color: color, fontSize: size(9), fontFamily: fontFamily),
+        TextStyle(color: color, fontSize: size(11), fontFamily: fontFamily),
     titleLarge: TextStyle(
         color: color,
         fontWeight: FontWeight.bold,
@@ -545,7 +553,7 @@ TextTheme _textTheme(Color color, double s, {String? fontFamily}) {
     headlineSmall: TextStyle(
         color: color,
         fontWeight: FontWeight.w600,
-        fontSize: size(16),
+        fontSize: size(14),
         fontFamily: fontFamily),
   );
 }
@@ -589,15 +597,17 @@ ElevatedButtonThemeData _buttonTheme(Color bg, Color fg, double s,
   double size(double v) => (v * s).clamp(10, 14);
   return ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
+      
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       backgroundColor: bg,
       foregroundColor: fg,
       textStyle: TextStyle(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         fontSize: size(s),
         fontFamily: fontFamily,
       ),
-      padding: EdgeInsets.symmetric(horizontal: 14 * s, vertical: 6 * s),
-      minimumSize: Size(64 * s, 32 * s),
+      padding: EdgeInsets.symmetric(horizontal: 14 * s, vertical: 4 * s),
+      minimumSize: Size(64 * s, 26.5 * s),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 3,
     ),
@@ -611,7 +621,7 @@ CardTheme _cardTheme({Color? color}) => CardTheme(
       color: color ?? Colors.white,
       elevation: 2,
       shape: RoundedRectangleBorder(),
-      margin: const EdgeInsets.all(8),
+      margin:  EdgeInsets.only(left: 2, right: 2,bottom: 0,top: 0),
     );
 DatePickerThemeData _calendarTheme(Color primary, Color font, double s) {
   return DatePickerThemeData(
@@ -683,8 +693,8 @@ class ThemeProvider with ChangeNotifier {
   static const _themeKeyPref = 'theme_key';
   static const _fontFamilyPref = 'font_family';
 
-  AppThemeKeys _themeKey = AppThemeKeys.coolGrey;
-  String _fontFamily = 'Roboto';
+  AppThemeKeys _themeKey = AppThemeKeys.tinyhtGreen;
+  String _fontFamily = 'Muli';
 
   AppThemeKeys get themeKey => _themeKey;
   String get fontFamily => _fontFamily;
@@ -711,7 +721,7 @@ class ThemeProvider with ChangeNotifier {
     prefs.setInt(_themeKeyPref, key.index);
   }
 
-  /// 🔤 Set Font
+   
   Future<void> setFontFamily(String font) async {
     if (font == _fontFamily) return;
     _fontFamily = font;

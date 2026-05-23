@@ -1,6 +1,7 @@
 import 'dart:async';
+ 
 import 'package:c_widget/const/c_helper.dart';
-import 'package:c_widget/const/theme/colors.dart';
+
 import 'package:flutter/material.dart';
 import 'package:searchable_dropdown/surchable_dropdown.dart';
 
@@ -15,6 +16,7 @@ class CSearchableDropdown<T> extends StatefulWidget {
   FocusNode focusNode;
   Function(String v)? onTextChenge;
   Function(String v)? onSubmitted;
+  void  Function()? onTap;
   TextAlign? textAlign;
   double height;
   double width;
@@ -24,7 +26,7 @@ class CSearchableDropdown<T> extends StatefulWidget {
   bool isDisable;
   bool isError;
   bool isDownIcon;
-
+  EdgeInsetsGeometry? padding;
   BorderRadius? borderRadius;
 
   CSearchableDropdown(
@@ -44,15 +46,14 @@ class CSearchableDropdown<T> extends StatefulWidget {
       this.isDisable = false,
       this.bgColor = Colors.transparent,
       this.isError = false,
-      this.borderRadius,this.isDownIcon=true});
+      this.borderRadius,
+      this.isDownIcon = true,this.padding,this.onTap});
 
   @override
-  _CSearchableDropdownState<T> createState() =>
-      _CSearchableDropdownState<T>();
+  _CSearchableDropdownState<T> createState() => _CSearchableDropdownState<T>();
 }
 
-class _CSearchableDropdownState<T>
-    extends State<CSearchableDropdown<T>> {
+class _CSearchableDropdownState<T> extends State<CSearchableDropdown<T>> {
   bool _isDisposed = false; // Keep track if widget is disposed
 
   @override
@@ -73,6 +74,7 @@ class _CSearchableDropdownState<T>
         return Stack(
           children: [
             CTextBox(
+              onTap: () => widget.onTap?.call(),
               issuffixIcon: widget.isDownIcon,
               //  fontSize: widget.fontSize,
               isError: widget.isError,
@@ -102,15 +104,23 @@ class _CSearchableDropdownState<T>
               },
               label: widget.label,
             ),
-            widget.isDisable?  Positioned(
-            left: 0,right: 0,bottom: 0,top: 0,
-            child: Container(color: Colors.transparent,)):SizedBox.shrink()
+            widget.isDisable
+                ? Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    top: 0,
+                    child: Container(
+                      color: Colors.transparent,
+                    ))
+                : SizedBox.shrink()
           ],
         );
       },
-      
       decorationBuilder: (context, child) => Material(
-        color: Theme.of(context).cardTheme.color, //isDark?AppThemeColors.scaffoldBackground(context):Colors.white,
+        color: Theme.of(context)
+            .cardTheme
+            .color, //isDark?AppThemeColors.scaffoldBackground(context):Colors.white,
         type: MaterialType.card,
         elevation: 4,
         borderRadius: safeOutlineBorder(context).borderRadius,
@@ -123,7 +133,7 @@ class _CSearchableDropdownState<T>
                 children: [
                   Flexible(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding: widget.padding?? const EdgeInsets.symmetric(
                           horizontal: 4, vertical: 4),
                       child: result,
                     ),

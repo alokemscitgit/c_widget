@@ -1,4 +1,4 @@
-import 'dart:async'; 
+import 'dart:async';
 
 import 'package:c_widget/const/widget/c_tab_button.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +50,11 @@ class ItemMenuAdd extends ItemMenuEvent {
   ItemMenuAdd({required this.menuitem});
 }
 
+class ItemMenuAddMobile extends ItemMenuEvent {
+  final ItemModel menuitem;
+  ItemMenuAddMobile({required this.menuitem});
+}
+
 class ItemMenuDelete extends ItemMenuEvent {
   final ItemModel menuitem;
   ItemMenuDelete({required this.menuitem});
@@ -65,6 +70,7 @@ class ItemMenuSetCurrent extends ItemMenuEvent {
 class MenuItemBloc extends Bloc<ItemMenuEvent, ItemMenuState> {
   MenuItemBloc() : super(const ItemMenuInit()) {
     on<ItemMenuAdd>(_addItem);
+    on<ItemMenuAddMobile>(_addItemForMobile);
     on<ItemMenuDelete>(_deleteItem);
     on<ItemMenuSetCurrent>(_setCurrentID);
   }
@@ -76,6 +82,18 @@ class MenuItemBloc extends Bloc<ItemMenuEvent, ItemMenuState> {
       currentID: event.id,
     ));
   }
+FutureOr<void> _addItemForMobile(
+    ItemMenuAddMobile event, Emitter<ItemMenuState> emit) {
+  
+  // Create a new list containing ONLY the item from the event
+  // This effectively "deletes" everything else in the state
+  final updatedList = [event.menuitem];
+
+  emit(ItemMenuAdded(
+    menuitem: updatedList,
+    currentID: event.menuitem.id,
+  ));
+}
 
   FutureOr<void> _addItem(ItemMenuAdd event, Emitter<ItemMenuState> emit) {
     final exists = state.menuitem.any((e) => e.id == event.menuitem.id);
@@ -208,7 +226,7 @@ double calculateHeight(BuildContext context) {
 
 class CTabMenuBar1 extends StatelessWidget {
   final ScrollController scrollController;
- final void Function(ItemModel menuitem)? onCrossClick;
+  final void Function(ItemModel menuitem)? onCrossClick;
   const CTabMenuBar1(
       {super.key, required this.scrollController, this.onCrossClick});
 
@@ -261,7 +279,7 @@ class CTabMenuBar1 extends StatelessWidget {
                       context.read<MenuItemBloc>().add(
                             ItemMenuDelete(menuitem: menuitem),
                           );
-                     onCrossClick?.call(menuitem);
+                      onCrossClick?.call(menuitem);
                       //deleteController(menuitem.id);
                     },
                   ),

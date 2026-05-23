@@ -43,7 +43,7 @@ class CGroupBox extends StatelessWidget {
               color: borderColor,
               width: borderWidth ?? sBordr.borderSide.width * .8,
             ),
-            boxShadow:  borderWidth==0?[]: [
+            boxShadow:  borderWidth==0?[]:  bgColor==Colors.transparent?[]:  [
             BoxShadow(
                 color: AppThemeColors.primary(context),
                 spreadRadius: -3,
@@ -55,7 +55,9 @@ class CGroupBox extends StatelessWidget {
             policy: WidgetOrderTraversalPolicy(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: children,
+              children: [
+                Row(),
+                ...children],
             ),
           ),
         ),
