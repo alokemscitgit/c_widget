@@ -24,8 +24,8 @@ ThemeData generateThemeData(
 
   // Define dynamic font scale by device type
   final scale = switch (deviceType) {
-    DeviceType.mobile => 0.92,
-    DeviceType.tablet => .95,
+    DeviceType.mobile => 0.94,
+    DeviceType.tablet => .98,
     DeviceType.desktop => 1.0,
   };
 
@@ -70,6 +70,7 @@ ThemeData _lightGreenTheme(double s, String? fontFamily) {
 
   return ThemeData(
     useMaterial3: true,
+    fontFamily: fontFamily,
     colorScheme: ColorScheme.fromSeed(
         seedColor: primary, secondary: secondary, brightness: Brightness.light),
     scaffoldBackgroundColor: bg,
@@ -101,7 +102,7 @@ ThemeData _blueTheme(double s, String? fontFamily) {
 
   return ThemeData(
     useMaterial3: true,
-
+    fontFamily: fontFamily,
     // ----------- ColorScheme -----------
     colorScheme: ColorScheme.fromSeed(
       seedColor: primary,
@@ -114,7 +115,7 @@ ThemeData _blueTheme(double s, String? fontFamily) {
     scaffoldBackgroundColor: bg,
 
     // ----------- AppBar -----------
-    appBarTheme: const AppBarTheme(
+    appBarTheme:   AppBarTheme(
       backgroundColor: panel,
       foregroundColor: Colors.white,
       elevation: 2,
@@ -124,6 +125,7 @@ ThemeData _blueTheme(double s, String? fontFamily) {
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: Colors.white,
+        fontFamily: fontFamily
       ),
     ),
 
@@ -459,7 +461,8 @@ ThemeData _tinyGreenTheme(double s, String? fontFamily) {
     scaffoldBackgroundColor: bg,
 
     // ===== AppBar ===== (FB style = white, small shadow, bold title)
-    appBarTheme: const AppBarTheme(
+    appBarTheme:   AppBarTheme(
+    
       backgroundColor: Colors.white,
       elevation: 1,
       shadowColor: Colors.black12,
@@ -469,6 +472,7 @@ ThemeData _tinyGreenTheme(double s, String? fontFamily) {
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: primary,
+        fontFamily: fontFamily
       ),
     ),
 
@@ -512,6 +516,7 @@ ThemeData _tinyGreenTheme(double s, String? fontFamily) {
       backgroundColor: Colors.white,
       selectedColor: secondary.withOpacity(0.3),
       labelStyle: TextStyle(
+        fontFamily: fontFamily,
         color: font,
         fontSize: 12 * s,
       ),
@@ -524,35 +529,46 @@ ThemeData _tinyGreenTheme(double s, String? fontFamily) {
 }
 
 TextTheme _textTheme(Color color, double s, {String? fontFamily}) {
-  double size(double base) => (base * s).clamp(11.1, 24);
+  double size(double base) => (base * s).clamp(11.6, 24);
   return TextTheme(
     bodyLarge:
-        TextStyle(color: color, fontSize: size(14), fontFamily: fontFamily),
+        TextStyle(color: color, fontSize: size(15), fontWeight: FontWeight.w400,fontFamily: fontFamily,height: 1.45,
+        letterSpacing: 0.15,),
     bodyMedium: TextStyle(
         color: color,
-        fontSize: size(13),
-        fontWeight: FontWeight.w600,
+        fontSize: size(13.5),
+        fontWeight: FontWeight.w400,
+        height: 1.4,
+        letterSpacing: 0.25,
         fontFamily: fontFamily),
     bodySmall:
-        TextStyle(color: color, fontSize: size(11), fontFamily: fontFamily),
+        TextStyle(color: color, fontSize: size(12), fontFamily: fontFamily,fontWeight: FontWeight.w400,
+        height: 1.35,
+        letterSpacing: 0.4,),
     titleLarge: TextStyle(
         color: color,
-        fontWeight: FontWeight.bold,
-        fontSize: size(18),
-        fontFamily: fontFamily),
+        //fontWeight: FontWeight.bold,
+        fontSize: size(20.0),
+        fontFamily: fontFamily,fontWeight: FontWeight.w600,
+        height: 1.3,
+        letterSpacing: -0.2,),
     titleMedium: TextStyle(
         color: color,
-        fontWeight: FontWeight.bold,
-        fontSize: size(16),
+        fontWeight: FontWeight.w600,
+        height: 1.35,
+        letterSpacing: 0.1,
+        fontSize: size(16.0),
         fontFamily: fontFamily),
     titleSmall: TextStyle(
         color: color,
         fontWeight: FontWeight.bold,
-        fontSize: size(13),
+        fontSize: size(14),
         fontFamily: fontFamily),
     headlineSmall: TextStyle(
         color: color,
         fontWeight: FontWeight.w600,
+        height: 1.4,
+        letterSpacing: 0.1,
         fontSize: size(14),
         fontFamily: fontFamily),
   );
@@ -581,9 +597,9 @@ InputDecorationTheme _inputDecoration(
         borderSide: BorderSide(color: border.withOpacity(0.5), width: 1.4),
         borderRadius: BorderRadius.circular(6)),
     focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: focus, width: .8),
+        borderSide: BorderSide(color: focus, width: .9),
         borderRadius: BorderRadius.circular(4)),
-    border: OutlineInputBorder(
+    border: OutlineInputBorder( borderSide: BorderSide(color: border, width: 1),
         borderRadius: BorderRadius.circular(4), gapPadding: 0),
     suffixIconConstraints: const BoxConstraints(minWidth: 28, minHeight: 20),
   );
@@ -623,7 +639,7 @@ CardTheme _cardTheme({Color? color}) => CardTheme(
       shape: RoundedRectangleBorder(),
       margin:  EdgeInsets.only(left: 2, right: 2,bottom: 0,top: 0),
     );
-DatePickerThemeData _calendarTheme(Color primary, Color font, double s) {
+DatePickerThemeData _calendarTheme(Color primary, Color font, double s,String? fontfamily) {
   return DatePickerThemeData(
     backgroundColor: Colors.white,
     surfaceTintColor: Colors.transparent,
@@ -638,10 +654,12 @@ DatePickerThemeData _calendarTheme(Color primary, Color font, double s) {
       fontSize: 18 * s,
       fontWeight: FontWeight.w700,
       color: font,
+      fontFamily: fontfamily
     ),
     headerHelpStyle: TextStyle(
       fontSize: 12 * s,
-      color: font.withOpacity(.7),
+      color: font.withOpacity(.7), fontFamily: fontfamily
+      
     ),
 
     // Weekday style
@@ -649,12 +667,14 @@ DatePickerThemeData _calendarTheme(Color primary, Color font, double s) {
       fontSize: 12 * s,
       color: primary.withOpacity(.8),
       fontWeight: FontWeight.w600,
+       fontFamily: fontfamily
     ),
 
     // Day cells
     dayStyle: TextStyle(
       fontSize: 13 * s,
       fontWeight: FontWeight.bold,
+       fontFamily: fontfamily
     ),
     dayForegroundColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(MaterialState.disabled)) return font.withOpacity(.5);
@@ -676,6 +696,7 @@ DatePickerThemeData _calendarTheme(Color primary, Color font, double s) {
     yearStyle: TextStyle(
       fontSize: 14 * s,
       fontWeight: FontWeight.w600,
+       fontFamily: fontfamily
     ),
     yearForegroundColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(MaterialState.selected)) return Colors.white;
@@ -694,7 +715,7 @@ class ThemeProvider with ChangeNotifier {
   static const _fontFamilyPref = 'font_family';
 
   AppThemeKeys _themeKey = AppThemeKeys.tinyhtGreen;
-  String _fontFamily = 'Muli';
+  String _fontFamily = 'Roboto';
 
   AppThemeKeys get themeKey => _themeKey;
   String get fontFamily => _fontFamily;
@@ -732,75 +753,4 @@ class ThemeProvider with ChangeNotifier {
   }
 }
 
-
-// class ThemeProvider with ChangeNotifier {
-//   AppThemeKeys _themeKey = AppThemeKeys.coolGrey;
-//   String _fontFamily = "Roboto"; // Default font
-
-//   AppThemeKeys get themeKey => _themeKey;
-//   String get fontFamily => _fontFamily;
-
-//   ThemeData getTheme(BuildContext context) =>
-//       generateThemeData(_themeKey, context, fontFamily: _fontFamily);
-
-//   void setTheme(AppThemeKeys key) {
-//     if (key != _themeKey) {
-//       _themeKey = key;
-//       notifyListeners();
-//     }
-//   }
-
-//   void setFontFamily(String font) {
-//     if (font != _fontFamily) {
-//       _fontFamily = font;
-//       notifyListeners();
-//     }
-//   }
-// }
-
-
-// class ThemeProvider1 with ChangeNotifier {
-//   AppThemeKeys _themeKey = AppThemeKeys.coolGrey;
-
-//   AppThemeKeys get themeKey => _themeKey;
-
-//   // -----------------
-//   // Load Theme
-//   // -----------------
-//   Future<void> loadTheme() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     final saved = prefs.getString("themeKey");
-
-//     if (saved != null) {
-//       _themeKey = themeKeyFromString(saved);
-//       notifyListeners();
-//     }
-//   }
-
-//   // -----------------
-//   // Current Theme
-//   // -----------------
-//   ThemeData getTheme(BuildContext context) =>
-//       generateThemeData(_themeKey, context);
-
-//   // -----------------
-//   // Change Theme + Save to SharedPreferences
-//   // -----------------
-//   Future<void> setTheme(AppThemeKeys key) async {
-//     if (key != _themeKey) {
-//       _themeKey = key;
-
-//       final prefs = await SharedPreferences.getInstance();
-//       prefs.setString("themeKey", themeKeyToString(key));
-
-//       notifyListeners();
-//     }
-//   }
-// }
-
-// AppThemeKeys themeKeyFromString(String key) {
-//   return AppThemeKeys.values.firstWhere(
-//     (e) => e.toString().split('.').last == key,
-//     orElse: () => AppThemeKeys.coolGrey,
-//   );
-// }
+ 

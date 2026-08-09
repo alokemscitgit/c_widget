@@ -1,5 +1,3 @@
- 
-
 import 'package:c_widget/const/c_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +36,8 @@ class CTextBox extends StatefulWidget {
   bool isAutofocus;
   TextStyle? labelStyle;
   TextStyle? textStyle;
+  bool? isMandatorySymbol;
+  Color? disabledColor;
   CTextBox(
       {super.key,
       this.label = '',
@@ -49,6 +49,7 @@ class CTextBox extends StatefulWidget {
       this.height = 26,
       this.textAlign = TextAlign.start,
       this.onChange,
+      this.isMandatorySymbol = false,
       this.isPassword = false,
       this.isReadonly = false,
       this.isDisable = false,
@@ -66,7 +67,9 @@ class CTextBox extends StatefulWidget {
       this.issuffixIcon = false,
       this.isAutofocus = false,
       this.suffixIcon,
-      this.labelStyle,this.textStyle,this.onTap})
+      this.labelStyle,
+      this.textStyle,this.disabledColor,
+      this.onTap})
       : onSubmitted = onSubmitted ?? ((String v) {}),
         onEditingComplete = onEditingComplete ?? (() {});
 
@@ -117,146 +120,167 @@ class _CTextBoxState extends State<CTextBox> {
               if (state is PasswordIconShowState) {
                 isObsText = state.isShow;
               }
-              return TextField(
-                autofocus: widget.isAutofocus,
-                textInputAction: widget.textInputType == TextInputType.multiline
-                    ? null
-                    : TextInputAction.next,
-                textDirection: widget.textInputType == TextInputType.multiline
-                    ? TextDirection.ltr
-                    : null,
-                autocorrect: widget.iSAutoCorrected,
-                textCapitalization: widget.isCapitalization == true
-                    ? TextCapitalization.characters
-                    : TextCapitalization.none,
-                focusNode: widget.focusNode,
-                enabled: !widget.isDisable,
-                readOnly: widget.isReadonly,
-                onChanged: (value) {
-                  setState(() {
-                    widget.isError = false;
-                  });
-                  if (widget.onChange != null) {
-                    widget.onChange!(value);
-                  }
-                },
-                onSubmitted: (v) {
-                  widget.onSubmitted(v);
-                },
-                onEditingComplete: () {
-                  widget.onEditingComplete();
-                },
-                onTap: () => widget.onTap?.call(),
-                keyboardType: widget.textInputType,
-                obscureText: !isObsText ? widget.isPassword : false,
-                inputFormatters: widget.isCapitalization
-                    ? [upperCaseTextFormatter()]
-                    : widget.textInputType == TextInputType.multiline
-                        ? []
-                        : widget.textInputType == TextInputType.emailAddress
-                            ? []
-                            : widget.textInputType == TextInputType.text
-                                ? []
-                                : widget.textInputType == TextInputType.datetime
-                                    ? [
-                                        //dateFormatter,
-                                        LengthLimitingTextInputFormatter(
-                                            10), // Limit to 10 characters
-                                        DateInputFormatter(),
-                                      ]
-                                    : [
-                                        widget.textInputType ==
-                                                TextInputType.number
-                                            ? FilteringTextInputFormatter.allow(
-                                                RegExp(r'^\d+\.?\d*'))
-                                            : FilteringTextInputFormatter
-                                                .digitsOnly
-                                      ],
-                maxLength: widget.maxlength,
-                maxLines: widget.maxLine,
-                style: widget.textStyle?? theme.textTheme.bodyMedium!.copyWith(),
-                textAlignVertical: TextAlignVertical.center,
-                textAlign: widget.textAlign!,
-                decoration: InputDecoration(
-                  hoverColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  // fillColor: Colors.white,
-                  filled: true,
-                  fillColor: widget.isDisable
-                      ? Colors
-                          .grey[theme.brightness == Brightness.dark ? 600 : 50]
-                      : inputTheme.fillColor,
-                  // focusColor: Colors.white,
-                  labelText: widget.label,
-                  labelStyle:
-                      widget.labelStyle ?? clabelStyle(context, widget.isError),
-                  // labelStyle: widget.isError
-                  //     ? inputTheme.labelStyle!.copyWith(color: Colors.red)
-                  //     : inputTheme.labelStyle!.copyWith(
-                  //         color: inputTheme.labelStyle!.color!.withOpacity(.6)
-                  //         ),
-                  hintText: widget.hintText,
+              return Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      autofocus: widget.isAutofocus,
+                      textInputAction:
+                          widget.textInputType == TextInputType.multiline
+                              ? null
+                              : TextInputAction.next,
+                      textDirection:
+                          widget.textInputType == TextInputType.multiline
+                              ? TextDirection.ltr
+                              : null,
+                      autocorrect: widget.iSAutoCorrected,
+                      textCapitalization: widget.isCapitalization == true
+                          ? TextCapitalization.characters
+                          : TextCapitalization.none,
+                      focusNode: widget.focusNode,
+                      enabled: !widget.isDisable,
+                      readOnly: widget.isReadonly,
+                      onChanged: (value) {
+                        setState(() {
+                          widget.isError = false;
+                        });
+                        if (widget.onChange != null) {
+                          widget.onChange!(value);
+                        }
+                      },
+                      onSubmitted: (v) {
+                        widget.onSubmitted(v);
+                      },
+                      onEditingComplete: () {
+                        widget.onEditingComplete();
+                      },
+                      onTap: () => widget.onTap?.call(),
+                      keyboardType: widget.textInputType,
+                      obscureText: !isObsText ? widget.isPassword : false,
+                      inputFormatters: widget.isCapitalization
+                          ? [upperCaseTextFormatter()]
+                          : widget.textInputType == TextInputType.multiline
+                              ? []
+                              : widget.textInputType ==
+                                      TextInputType.emailAddress
+                                  ? []
+                                  : widget.textInputType == TextInputType.text
+                                      ? []
+                                      : widget.textInputType ==
+                                              TextInputType.datetime
+                                          ? [
+                                              //dateFormatter,
+                                              LengthLimitingTextInputFormatter(
+                                                  10), // Limit to 10 characters
+                                              DateInputFormatter(),
+                                            ]
+                                          : [
+                                              widget.textInputType ==
+                                                      TextInputType.number
+                                                  ? FilteringTextInputFormatter
+                                                      .allow(
+                                                          RegExp(r'^\d+\.?\d*'))
+                                                  : FilteringTextInputFormatter
+                                                      .digitsOnly
+                                            ],
+                      maxLength: widget.maxlength,
+                      maxLines: widget.maxLine,
+                      style: widget.textStyle ??
+                          theme.textTheme.bodyMedium!.copyWith(),
+                      textAlignVertical: TextAlignVertical.center,
+                      textAlign: widget.textAlign!,
+                      decoration: InputDecoration(
+                        hoverColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        // fillColor: Colors.white,
+                        filled: true,
+                        fillColor: widget.isDisable
+                            ? widget.disabledColor?? Colors.grey[
+                                theme.brightness == Brightness.dark ? 700 : 50]
+                            : inputTheme.fillColor,
+                        // focusColor: Colors.white,
+                        labelText: widget.label,
+                        labelStyle: widget.labelStyle ??
+                            clabelStyle(context, widget.isError),
+                        // labelStyle: widget.isError
+                        //     ? inputTheme.labelStyle!.copyWith(color: Colors.red)
+                        //     : inputTheme.labelStyle!.copyWith(
+                        //         color: inputTheme.labelStyle!.color!.withOpacity(.6)
+                        //         ),
+                        hintText: widget.hintText,
 
-                  hintStyle: theme.textTheme.labelSmall,
-                  counterText: '',
-                  border: CBorders.border(
-                      context: context,
-                      //borderRadious: widget.borderRadious??AppThemeColors.inputBorder(context).borderRadius,
-                      isError: widget.isError,
-                      isDisabled: widget.isDisable),
-                  focusedBorder: CBorders.focused(context,
-                      borderRadious: widget.borderRadious,
-                      isError: widget.isError),
-                  enabledBorder: CBorders.enabled(context,
-                      borderRadious: widget.borderRadious,
-                      isError: widget.isError),
-                  disabledBorder: CBorders.disabled(context,
-                      borderRadious: widget.borderRadious),
-                  suffixIcon: widget.isPassword
-                      ? InkWell(
-                          onTap: () {
-                            context
-                                .read<PasswordShowBloc>()
-                                .add(PasswordShowSetEvent(isShow: !isObsText));
-                          },
-                          child: Icon(
-                            !isObsText
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                            size:
-                                (((theme.textTheme.bodyLarge!.fontSize) ?? 16) *
-                                    1.2),
-                            color: theme.colorScheme.secondary,
-                          ),
-                        )
-                      : widget.issuffixIcon
-                          ? MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: Icon(
-                                widget.suffixIcon ?? Icons.keyboard_arrow_down,
+                        hintStyle: theme.textTheme.labelSmall,
+                        counterText: '',
+                        border: CBorders.border(
+                            context: context,
+                            //borderRadious: widget.borderRadious??AppThemeColors.inputBorder(context).borderRadius,
+                            isError: widget.isError,
+                            isDisabled: widget.isDisable),
+                        focusedBorder: CBorders.focused(context,
+                            borderRadious: widget.borderRadious,
+                            isError: widget.isError),
+                        enabledBorder: CBorders.enabled(context,
+                            borderRadious: widget.borderRadious,
+                            isError: widget.isError),
+                        disabledBorder: CBorders.disabled(context,
+                            borderRadious: widget.borderRadious),
+                        suffixIcon: widget.isPassword
+                            ? InkWell(
+                                onTap: () {
+                                  context.read<PasswordShowBloc>().add(
+                                      PasswordShowSetEvent(isShow: !isObsText));
+                                },
+                                child: Icon(
+                                  !isObsText
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  size:
+                                      (((theme.textTheme.bodyLarge!.fontSize) ??
+                                              16) *
+                                          1.2),
+                                  color: theme.colorScheme.secondary,
+                                ),
+                              )
+                            : widget.issuffixIcon
+                                ? MouseRegion(
+                                    cursor: SystemMouseCursors.click,
+                                    child: Icon(
+                                      widget.suffixIcon ??
+                                          Icons.keyboard_arrow_down,
+                                      size: (((theme.textTheme.bodyLarge!
+                                                  .fontSize) ??
+                                              16) *
+                                          1.5),
+                                      color: theme.colorScheme.secondary,
+                                    ),
+                                  )
+                                : null,
+                        prefixIcon: widget.isSearchBox
+                            ? Icon(
+                                Icons.search_rounded,
                                 size: (((theme.textTheme.bodyLarge!.fontSize) ??
-                                        16) *
-                                    1.5),
+                                        14) *
+                                    1.2),
                                 color: theme.colorScheme.secondary,
-                              ),
-                            )
-                          : null,
-                  prefixIcon: widget.isSearchBox
-                      ? Icon(
-                          Icons.search_rounded,
-                          size: (((theme.textTheme.bodyLarge!.fontSize) ?? 14) *
-                              1.2),
-                          color: theme.colorScheme.secondary,
-                        )
-                      : null,
-                  contentPadding: resolved,
-                  //const EdgeInsets.only(
-                  //    // bottom: 6,
-                  //   // top: 2,
-                  //     left: 8,
-                  //     right: 8)
-                ),
-                controller: widget.controller,
+                              )
+                            : null,
+                        contentPadding: resolved,
+                        //const EdgeInsets.only(
+                        //    // bottom: 6,
+                        //   // top: 2,
+                        //     left: 8,
+                        //     right: 8)
+                      ),
+                      controller: widget.controller,
+                    ),
+                  ),
+                  if (widget.isMandatorySymbol ?? false)
+                    Text(
+                      '*',
+                      style: (theme.textTheme.bodyLarge!
+                          .copyWith(color: clabelStyle(context, true).color)),
+                    )
+                ],
               );
             },
           ),

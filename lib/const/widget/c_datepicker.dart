@@ -34,11 +34,12 @@ class CDatePicker extends StatefulWidget {
   bool isDisable;
   BorderRadius? borderRadious;
   List<DateTime>? pridictDate;
+  void Function(String) onSubmitted;
   CDatePicker(
       {super.key,
       // ignore: non_constant_identifier_names
       required this.controller,
-      this.label = 'Select Date',
+      this.label = '',
       this.height = 26,
       this.width = 130,
       this.isBackDate = false,
@@ -57,8 +58,10 @@ class CDatePicker extends StatefulWidget {
       this.isError = false,
       this.isDisable = false,
       this.borderRadious,
+      void Function(String)? onSubmitted,
       List<DateTime>? pridictDate})
-      : pridictDate = pridictDate ?? [];
+      : onSubmitted = onSubmitted ?? ((String v) {}),
+        pridictDate = pridictDate ?? [];
 
   @override
   State<CDatePicker> createState() => _CDatePickerState();
@@ -98,23 +101,28 @@ class _CDatePickerState extends State<CDatePicker> {
 
             child: Stack(
               children: [
-                _cText(context, widget, (value) {
-                  try {
-                    if (value.length == 10) {
-                      if (!widget.isBackDate!) {
-                        var dt2 = DateFormat("dd/MM/yyyy")
-                            .format(DateTime.now())
-                            .toString();
-                        //  print(dt2);
-                        if (!isValidDateRange(dt2, value)) {
-                          setState(() {
-                            widget.controller.text = '';
-                          });
+                _cText(
+                  context,
+                  widget,
+                  fun: (value) {
+                    try {
+                      if (value.length == 10) {
+                        if (!widget.isBackDate!) {
+                          var dt2 = DateFormat("dd/MM/yyyy")
+                              .format(DateTime.now())
+                              .toString();
+                          //  print(dt2);
+                          if (!isValidDateRange(dt2, value)) {
+                            setState(() {
+                              widget.controller.text = '';
+                            });
+                          }
                         }
                       }
-                    }
-                  } catch (e) {}
-                }),
+                    } catch (e) {}
+                  },
+                  onSubmitted: (p0) => widget.onSubmitted.call(p0),
+                ),
               ],
             ),
             //)
@@ -135,7 +143,7 @@ class _CDatePickerState extends State<CDatePicker> {
   }
 
   Widget _cText(BuildContext context, dynamic widget,
-      [Function(String d)? fun]) {
+      {Function(String d)? fun, void Function(String)? onSubmitted}) {
     final theme = Theme.of(context);
     final inputTheme = theme.inputDecorationTheme;
     final resolved =
@@ -145,6 +153,7 @@ class _CDatePickerState extends State<CDatePicker> {
       right: 2,
     );
     return TextFormField(
+      onFieldSubmitted: (value) => onSubmitted?.call(value),
       focusNode: widget.focusNode,
 
       controller: widget.controller,
@@ -161,17 +170,21 @@ class _CDatePickerState extends State<CDatePicker> {
             ? Colors.grey[theme.brightness == Brightness.dark ? 600 : 50]
             : inputTheme.fillColor,
         // focusColor: Colors.white,
-        labelText: widget.label,
+        labelText: widget.label==''?null:widget.label,
         labelStyle: clabelStyle(context, widget.isError),
         hintText: widget.hintText,
-
-        hintStyle: theme.textTheme.labelSmall,
+ 
+                  // hintText: widget.,
+            
+                 // hintStyle: theme.textTheme.labelSmall,
+        hintStyle: theme.textTheme.labelSmall!.copyWith( color:  theme.textTheme.labelSmall!.color!.withOpacity(0.6)),
         counterText: '',
         border: CBorders.border(
             context: context,
             borderRadious: widget.borderRadious,
             isError: widget.isError,
             isDisabled: widget.isDisable),
+
         focusedBorder: CBorders.focused(context,
             borderRadious: widget.borderRadious, isError: widget.isError),
         enabledBorder: CBorders.enabled(context,
@@ -216,15 +229,17 @@ class _CDatePickerState extends State<CDatePicker> {
                   }(),
                   initialDate: () {
                     try {
-                      return  widget.controller.text.length == 10
+                      return widget.controller.text.length == 10
                           ? DateFormat("dd/MM/yyyy")
                               .parse(widget.controller.text)
                           : widget.pridictDate.isNotEmpty
-                      ? widget.pridictDate.first: DateTime.now();
+                              ? widget.pridictDate.first
+                              : DateTime.now();
                     } catch (e) {
                       // Handle parse exception, return current date as fallback
                       return widget.pridictDate.isNotEmpty
-                      ? widget.pridictDate.first:DateTime.now();
+                          ? widget.pridictDate.first
+                          : DateTime.now();
                     }
                   }(),
                   firstDate: widget.pridictDate.isNotEmpty
@@ -284,12 +299,12 @@ class _CDatePickerState extends State<CDatePicker> {
                   },
 
                   selectableDayPredicate: (d) =>
-                  widget.pridictDate.isEmpty ||
-                  widget.pridictDate.any((x) =>
-                      x.year == d.year &&
-                      x.month == d.month &&
-                      x.day == d.day),
-               
+                      widget.pridictDate.isEmpty ||
+                      widget.pridictDate.any((x) =>
+                          x.year == d.year &&
+                          x.month == d.month &&
+                          x.day == d.day),
+
                   // selectableDayPredicate: (day) {
                   //   // print(widget.pridictDate.any((d) =>
                   //   //     d.year == day.year &&
@@ -316,6 +331,7 @@ class _CDatePickerState extends State<CDatePicker> {
         ),
       ),
       onChanged: (value) {
+       // widget.controller.text = value;
         if (fun != null) {
           fun(value);
         }

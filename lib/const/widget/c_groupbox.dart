@@ -24,11 +24,11 @@ class CGroupBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inputTheme = AppThemeColors.inputDecorationTheme(context);
+     
     final sBordr = safeOutlineBorder(context);
     final borderColor = sBordr.borderSide.color;
     final labelStyle = clabelStyle(context, false);
-    final labelFontSize =  9 * AppThemeColors.scale(context);
+    final labelFontSize =  9.6 * AppThemeColors.scale(context);
 
     return Stack(
       clipBehavior: Clip.none,
@@ -37,7 +37,7 @@ class CGroupBox extends StatelessWidget {
           height: height > 0 ? height : null,
           padding: padding,
           decoration: BoxDecoration(
-            color: bgColor ?? AppThemeColors.scaffoldBackground(context),
+            color: bgColor ?? AppThemeColors.scaffoldBackground(context).withAlpha(250).withOpacity(0.95) ,
             borderRadius: BorderRadius.circular(borderRadius),
             border: borderWidth==0?null:  Border.all(
               color: borderColor,
@@ -78,6 +78,7 @@ class CGroupBox extends StatelessWidget {
                     style: labelStyle.copyWith(
                       color: Colors.transparent,
                       fontSize: labelFontSize,
+                      fontWeight: FontWeight.bold
                     ),
                   ),
                 ),
@@ -95,7 +96,7 @@ class CGroupBox extends StatelessWidget {
                     style: labelStyle.copyWith(
                       color:labelColor?? labelStyle.color!.withOpacity(.6),
                       fontSize: labelFontSize,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                       fontStyle: FontStyle.italic
                     ),
                   ),

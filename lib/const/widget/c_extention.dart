@@ -11,9 +11,8 @@ class HeaderTextBuilder {
   Color _bgColor = Colors.transparent;
   EdgeInsets _padding = const EdgeInsets.symmetric(horizontal: 6, vertical: 4);
   bool _showToolTip = false;
- Color? _borderRightColor ;
+  Color? _borderRightColor;
   double? _borderRightWidth;
-
 
   HeaderTextBuilder(this.text);
   // -------- alignment shortcuts --------
@@ -119,14 +118,17 @@ class HeaderTextBuilder {
 //       bgColor: _bgColor,
     return this;
   }
-  HeaderTextBuilder  borderRightColor(Color color) {
+
+  HeaderTextBuilder borderRightColor(Color color) {
     _borderRightColor = color;
     return this;
   }
-  HeaderTextBuilder  borderRightWidth(double weidth) {
+
+  HeaderTextBuilder borderRightWidth(double weidth) {
     _borderRightWidth = weidth;
     return this;
   }
+
   // -------- build --------
   CustomTableColumnHeaderBlackNew build() {
     return CustomTableColumnHeaderBlackNew(
@@ -137,7 +139,9 @@ class HeaderTextBuilder {
       fontWeight: _fontWeight,
       bgColor: _bgColor,
       padding: _padding,
-      IsShowToolTip: _showToolTip,borderRightColor: _borderRightColor,borderRightWidth: _borderRightWidth,
+      IsShowToolTip: _showToolTip,
+      borderRightColor: _borderRightColor,
+      borderRightWidth: _borderRightWidth,
     );
   }
 
@@ -155,7 +159,7 @@ class TableCellTextBuilder {
   final String text;
 
   Alignment _alignment = Alignment.centerLeft;
-  Color _fontColor = Colors.black;
+  Color? _fontColor = null;
   double _fontSize = 13;
   FontWeight _fontWeight = FontWeight.w500;
   Color _bgColor = Colors.transparent;
@@ -333,6 +337,7 @@ class TableCellTextBuilder {
 
   // ---------- build ----------
   CustomTableCellx build() {
+     
     return CustomTableCellx(
       text: text,
       alignment: _alignment,
@@ -375,22 +380,26 @@ class CustomTableColumnHeaderBlackNew extends StatelessWidget {
   Color? borderRightColor;
   double? borderRightWidth;
 
-  CustomTableColumnHeaderBlackNew({
-    super.key,
-    required this.text,
-    this.IsShowToolTip = false,
-    this.alignment = Alignment.centerLeft,
-    this.fontSize = 12,
-    this.fontWeight = FontWeight.bold,
-    this.bgColor = Colors.transparent,
-    this.textColor = Colors.black,
-    this.padding = const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-    this.borderRightColor,this.borderRightWidth
-  });
+  CustomTableColumnHeaderBlackNew(
+      {super.key,
+      required this.text,
+      this.IsShowToolTip = false,
+      this.alignment = Alignment.centerLeft,
+      this.fontSize = 12,
+      this.fontWeight = FontWeight.bold,
+      this.bgColor = Colors.transparent,
+      this.textColor = Colors.black,
+      this.padding = const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      this.borderRightColor,
+      this.borderRightWidth});
 
   @override
   Widget build(BuildContext context) {
     Color colotH = AppThemeColors.secondary(context);
+    HSLColor hslColor = HSLColor.fromColor(colotH);
+    colotH = hslColor
+        .withLightness((hslColor.lightness - 0.2).clamp(0.0, 1.0))
+        .toColor();
     return TableCell(
       verticalAlignment: TableCellVerticalAlignment.middle,
       child: IsShowToolTip
@@ -398,7 +407,10 @@ class CustomTableColumnHeaderBlackNew extends StatelessWidget {
               message: text,
               child: __headerContainer(
                   text, alignment, fontSize, fontWeight, padding,
-                  bgColor: bgColor, textColor: textColor ?? colotH,borderRightColor: borderRightColor,borderRightWidth: borderRightWidth),
+                  bgColor: bgColor,
+                  textColor: textColor ?? colotH,
+                  borderRightColor: borderRightColor,
+                  borderRightWidth: borderRightWidth),
             )
           : __headerContainer(text, alignment, fontSize, fontWeight, padding,
               bgColor: bgColor, textColor: textColor ?? colotH),
@@ -447,7 +459,7 @@ class CustomTableCellx extends StatelessWidget {
   final EdgeInsets? padding;
   final Color bgColor;
   final bool isSelectable;
-  final Color fontColor;
+  final Color? fontColor;
   final Color borderColor;
   final double borderWidth;
   final bool isTextTuncate;
@@ -467,7 +479,7 @@ class CustomTableCellx extends StatelessWidget {
     this.padding,
     this.bgColor = Colors.transparent,
     this.isSelectable = false,
-    this.fontColor = Colors.black,
+    this.fontColor,
     this.onTap,
     this.onHover,
     this.onExit,
@@ -481,6 +493,8 @@ class CustomTableCellx extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+ 
     return TableCell(
       verticalAlignment: tableCellVerticalAlignment,
       child: Container(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CScrollablePanel extends StatelessWidget {
   final List<Widget> children;
   final double minWidth;
+   
   final bool isVerticalScroll;
 
   const CScrollablePanel({
@@ -10,6 +11,7 @@ class CScrollablePanel extends StatelessWidget {
     required this.children,
     this.minWidth = 800,
     this.isVerticalScroll = false,
+    
   });
 
   @override

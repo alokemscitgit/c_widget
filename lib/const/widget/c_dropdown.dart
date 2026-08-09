@@ -1,5 +1,4 @@
  
-import 'package:c_widget/const/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 import '../c_helper.dart';
@@ -14,7 +13,7 @@ class CDropDown extends StatefulWidget {
       required this.onTap,
       this.width = 100,
       this.height = 26,
-      this.labeltext = 'Select',
+      this.labeltext = '',
       this.focusNode,
       this.isError = false,
       this.isAutoValidate = false,
@@ -86,9 +85,9 @@ itemHeight: null,
               focusNode: widget.focusNode,
               style:theme.textTheme.bodyMedium,
               value: (widget.isScapeZeroValue &&
-                      (widget.id == '' || widget.id.toString() == '0'))
+                      (widget.id.toString() == '' || widget.id.toString() == '0'))
                   ? null
-                  : widget.list!.where((e) => e.id == widget.id).isEmpty
+                  : widget.list!.where((e) => e.id.toString() == widget.id).isEmpty
                       ? null
                       : (widget.id == '' ? null : widget.id),
               items: widget.list!

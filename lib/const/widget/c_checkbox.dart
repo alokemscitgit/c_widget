@@ -216,6 +216,7 @@ class CCheckbox2 extends StatelessWidget {
   final double? textFontSize;
   final FontWeight? textFontWeight;
   final bool isTruncate;
+  final Color? checkTickColor;
 
   const CCheckbox2({
     super.key,
@@ -229,7 +230,7 @@ class CCheckbox2 extends StatelessWidget {
     this.animTextColor,
     this.textFontSize,
     this.textFontWeight,
-    this.isTruncate = false,
+    this.isTruncate = false,this.checkTickColor
   });
 
   @override
@@ -303,7 +304,7 @@ class CCheckbox2 extends StatelessWidget {
                             onChanged?.call(v ?? false),
                         activeColor:
                             Theme.of(context).colorScheme.secondary,
-                        checkColor: animTextColor ??
+                        checkColor: checkTickColor ??
                             Theme.of(context)
                                 .colorScheme
                                 .onPrimary,
