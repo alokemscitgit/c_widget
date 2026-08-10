@@ -29,4 +29,5 @@ export 'const/widget/c_tab_menu_bar.dart';
 export 'const/widget/c_tree_line.dart';
 export 'const/widget/c_searchable_overlay.dart';
 export 'const/widget/c_overlay.dart';
+export 'const/widget/c_split_panel.dart';
 //All widget

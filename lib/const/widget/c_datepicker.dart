@@ -176,8 +176,10 @@ class _CDatePickerState extends State<CDatePicker> {
  
                   // hintText: widget.,
             
-                 // hintStyle: theme.textTheme.labelSmall,
-        hintStyle: theme.textTheme.labelSmall!.copyWith( color:  theme.textTheme.labelSmall!.color!.withOpacity(0.6)),
+                //  hintStyle: theme.textTheme.labelSmall,
+       hintStyle: theme.textTheme.labelSmall?.copyWith(
+  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+),
         counterText: '',
         border: CBorders.border(
             context: context,

@@ -81,129 +81,6 @@ class _CCheckboxState extends State<CCheckbox> {
   }
 }
 
-// class CCheckbox2 extends StatelessWidget {
-//   final String label;
-//   final bool value;
-//   final ValueChanged<bool>? onChanged;
-//   final bool isLabelColorChange;
-//   final bool isAnim;
-//   final bool isShoCheck;
-//   final Color? animColor;
-//   final Color? animTextColor;
-//   final double? textFontSize;
-//   final FontWeight? textFontWeight;
-//   final bool isTruncate;
-//   const CCheckbox2(
-//       {super.key,
-//       required this.label,
-//       required this.value,
-//       this.onChanged,
-//       this.isLabelColorChange = true,
-//       this.isAnim = true,
-//       this.isShoCheck = true,
-//       this.animColor,
-//       this.animTextColor,
-//       this.textFontSize,
-//       this.textFontWeight,this.isTruncate=false});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final fontSize =
-//         textFontSize ?? Theme.of(context).textTheme.bodySmall?.fontSize ?? 9;
-
-//     // Scale checkbox based on font size
-//     final scale = (fontSize / 16).clamp(0.6, 1.0);
-
-//     return Stack(
-//       children: [
-//         Positioned.fill(
-//           child: !isAnim
-//               ? SizedBox()
-//               : AnimatedSlide(
-//                   duration: const Duration(milliseconds: 350),
-//                   curve: Curves.easeOutCubic,
-//                   offset: value ? const Offset(0, 0) : const Offset(-1, 0),
-//                   child: AnimatedContainer(
-//                     duration: const Duration(milliseconds: 350),
-//                     curve: Curves.easeOutCubic,
-//                     decoration: BoxDecoration(
-//                       color: value
-//                           ? (animColor ?? AppThemeColors(context).selectedBg)
-//                           : Colors.transparent,
-//                       borderRadius: BorderRadius.circular(6),
-//                     ),
-//                   ),
-//                 ),
-//         ),
-//         Padding(
-//           padding: EdgeInsets.only(right: 6, left: !isShoCheck ? 6 : 0),
-//           child: Row(
-//             mainAxisSize: isTruncate? MainAxisSize.max: MainAxisSize.min,
-//             children: [
-//               Transform.scale(
-//                 scale: scale,
-//                 child: !isShoCheck
-//                     ? SizedBox(
-//                         height: 18,
-//                       )
-//                     : Checkbox(
-//                         value: value,
-//                         onChanged: (v) => onChanged?.call(v ?? false),
-//                         activeColor: Theme.of(context).colorScheme.secondary,
-//                         checkColor: animTextColor ??
-//                             Theme.of(context).colorScheme.onPrimary,
-//                         visualDensity: const VisualDensity(
-//                           horizontal: -4,
-//                           vertical: -4,
-//                         ),
-//                       ),
-//               ),
-//               InkWell(
-//                 onTap: () => onChanged?.call(!value),
-//                 splashColor: Colors.transparent,
-//                 hoverColor: Colors.transparent,
-//                 highlightColor: Colors.transparent,
-//                 child: isTruncate?Expanded(
-//                   child: Text(
-//                     overflow: TextOverflow.ellipsis,
-//                     maxLines: 1,
-//                     label,
-//                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-//                           overflow: TextOverflow.ellipsis,
-//                           fontSize: fontSize * .91,
-//                           fontWeight: value
-//                               ? FontWeight.bold
-//                               : (textFontWeight ?? FontWeight.w600),
-//                           color: (value && isLabelColorChange)
-//                               ? animTextColor ??
-//                                   Theme.of(context).colorScheme.secondary
-//                               : Theme.of(context).textTheme.bodySmall?.color,
-//                         ),
-//                   ),
-//                 ):  Text(
-//                   overflow: TextOverflow.ellipsis,
-//                   maxLines: 1,
-//                   label,
-//                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-//                         overflow: TextOverflow.ellipsis,
-//                         fontSize: fontSize * .91,
-//                         fontWeight: value
-//                             ? FontWeight.bold
-//                             : (textFontWeight ?? FontWeight.w600),
-//                         color: (value && isLabelColorChange)
-//                             ? animTextColor ??
-//                                 Theme.of(context).colorScheme.secondary
-//                             : Theme.of(context).textTheme.bodySmall?.color,
-//                       ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
 class CCheckbox2 extends StatelessWidget {
   final String label;
   final bool value;
@@ -218,20 +95,20 @@ class CCheckbox2 extends StatelessWidget {
   final bool isTruncate;
   final Color? checkTickColor;
 
-  const CCheckbox2({
-    super.key,
-    required this.label,
-    required this.value,
-    this.onChanged,
-    this.isLabelColorChange = true,
-    this.isAnim = true,
-    this.isShoCheck = true,
-    this.animColor,
-    this.animTextColor,
-    this.textFontSize,
-    this.textFontWeight,
-    this.isTruncate = false,this.checkTickColor
-  });
+  const CCheckbox2(
+      {super.key,
+      required this.label,
+      required this.value,
+      this.onChanged,
+      this.isLabelColorChange = true,
+      this.isAnim = true,
+      this.isShoCheck = true,
+      this.animColor,
+      this.animTextColor,
+      this.textFontSize,
+      this.textFontWeight,
+      this.isTruncate = false,
+      this.checkTickColor});
 
   @override
   Widget build(BuildContext context) {
@@ -240,28 +117,30 @@ class CCheckbox2 extends StatelessWidget {
 
     final scale = (fontSize / 16).clamp(0.6, 1.0);
 
-    Widget textWidget = label.isEmpty?SizedBox.shrink(): InkWell(
-      onTap: () => onChanged?.call(!value),
-      splashColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      child:   Text(
-        label,
-        maxLines: isTruncate ? 1 : null,
-        overflow:
-            isTruncate ? TextOverflow.ellipsis : TextOverflow.visible,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontSize: fontSize * .91,
-              fontWeight: value
-                  ? FontWeight.bold
-                  : (textFontWeight ?? FontWeight.w600),
-              color: (value && isLabelColorChange)
-                  ? animTextColor ??
-                      Theme.of(context).colorScheme.secondary
-                  : Theme.of(context).textTheme.bodySmall?.color,
+    Widget textWidget = label.isEmpty
+        ? SizedBox.shrink()
+        : InkWell(
+            onTap: () => onChanged?.call(!value),
+            splashColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            child: Text(
+              label,
+              maxLines: isTruncate ? 1 : null,
+              overflow:
+                  isTruncate ? TextOverflow.ellipsis : TextOverflow.visible,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontSize: fontSize * .91,
+                    fontWeight: value
+                        ? FontWeight.bold
+                        : (textFontWeight ?? FontWeight.w600),
+                    color: (value && isLabelColorChange)
+                        ? animTextColor ??
+                            Theme.of(context).colorScheme.secondary
+                        : Theme.of(context).textTheme.bodySmall?.color,
+                  ),
             ),
-      ),
-    );
+          );
 
     return Stack(
       children: [
@@ -271,16 +150,13 @@ class CCheckbox2 extends StatelessWidget {
               : AnimatedSlide(
                   duration: const Duration(milliseconds: 350),
                   curve: Curves.easeOutCubic,
-                  offset: value
-                      ? const Offset(0, 0)
-                      : const Offset(-1, 0),
+                  offset: value ? const Offset(0, 0) : const Offset(-1, 0),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 350),
                     curve: Curves.easeOutCubic,
                     decoration: BoxDecoration(
                       color: value
-                          ? (animColor ??
-                              AppThemeColors(context).selectedBg)
+                          ? (animColor ?? AppThemeColors(context).selectedBg)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -288,11 +164,9 @@ class CCheckbox2 extends StatelessWidget {
                 ),
         ),
         Padding(
-          padding: EdgeInsets.only(
-              right: 6, left: !isShoCheck ? 6 : 0),
+          padding: EdgeInsets.only(right: 6, left: !isShoCheck ? 6 : 0),
           child: Row(
-            mainAxisSize:
-                isTruncate ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisSize: isTruncate ? MainAxisSize.max : MainAxisSize.min,
             children: [
               Transform.scale(
                 scale: scale,
@@ -300,30 +174,45 @@ class CCheckbox2 extends StatelessWidget {
                     ? const SizedBox(height: 18)
                     : Checkbox(
                         value: value,
-                        onChanged: (v) =>
-                            onChanged?.call(v ?? false),
-                        activeColor:
-                            Theme.of(context).colorScheme.secondary,
+                        onChanged: (v) => onChanged?.call(v ?? false),
+                        activeColor: Theme.of(context).colorScheme.secondary,
                         checkColor: checkTickColor ??
-                            Theme.of(context)
-                                .colorScheme
-                                .onPrimary,
+                            Theme.of(context).colorScheme.onPrimary,
                         visualDensity: const VisualDensity(
                           horizontal: -4,
                           vertical: -4,
                         ),
                       ),
               ),
-
-              
-              if (isTruncate )
-              label.isEmpty?SizedBox.shrink():  Expanded(child: textWidget)
+              if (isTruncate)
+                label.isEmpty ? SizedBox.shrink() : Expanded(child: textWidget)
               else
-              label.isEmpty?SizedBox.shrink():  textWidget,
+                label.isEmpty ? SizedBox.shrink() : textWidget,
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class CCheckBox3 extends StatelessWidget {
+  CCheckBox3({super.key, this.value, this.onChanged, this.checkColor});
+  bool? value;
+  final void Function(bool)? onChanged;
+  final Color? checkColor;
+  @override
+  Widget build(BuildContext context) {
+    return Checkbox(
+      value: value,
+      onChanged: (v) => onChanged?.call(v ?? false),
+      activeColor: Theme.of(context).colorScheme.secondary,
+      checkColor: checkColor ?? Theme.of(context).colorScheme.onPrimary,
+      visualDensity: const VisualDensity(
+        horizontal: -4,
+        vertical: -4,
+      ),
     );
   }
 }

@@ -41,13 +41,13 @@ class CGroupBox extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius),
             border: borderWidth==0?null:  Border.all(
               color: borderColor,
-              width: borderWidth ?? sBordr.borderSide.width * .8,
+              width: borderWidth ?? 1,
             ),
             boxShadow:  borderWidth==0?[]:  bgColor==Colors.transparent?[]:  [
             BoxShadow(
                 color: AppThemeColors.primary(context),
-                spreadRadius: -3,
-                blurRadius: 3,
+                spreadRadius: -4,
+                blurRadius: 6,
               ),
             ],
           ),
