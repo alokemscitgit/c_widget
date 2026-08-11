@@ -18,6 +18,7 @@ class CTextBox extends StatefulWidget {
   bool isPassword;
   bool isReadonly;
   bool isDisable;
+  bool isIntCapitalization;
   Color surfixIconColor;
   void Function(String v)? onChange;
   void Function(String) onSubmitted;
@@ -68,7 +69,9 @@ class CTextBox extends StatefulWidget {
       this.isAutofocus = false,
       this.suffixIcon,
       this.labelStyle,
-      this.textStyle,this.disabledColor,
+      this.textStyle,
+      this.disabledColor,
+      this.isIntCapitalization=false,
       this.onTap})
       : onSubmitted = onSubmitted ?? ((String v) {}),
         onEditingComplete = onEditingComplete ?? (() {});
@@ -158,7 +161,7 @@ class _CTextBoxState extends State<CTextBox> {
                       keyboardType: widget.textInputType,
                       obscureText: !isObsText ? widget.isPassword : false,
                       inputFormatters: widget.isCapitalization
-                          ? [upperCaseTextFormatter()]
+                          ?( [upperCaseTextFormatter()]):widget.isIntCapitalization ? ([InitCapTextFormatter()])
                           : widget.textInputType == TextInputType.multiline
                               ? []
                               : widget.textInputType ==
@@ -195,8 +198,10 @@ class _CTextBoxState extends State<CTextBox> {
                         // fillColor: Colors.white,
                         filled: true,
                         fillColor: widget.isDisable
-                            ? widget.disabledColor?? Colors.grey[
-                                theme.brightness == Brightness.dark ? 700 : 50]
+                            ? widget.disabledColor ??
+                                Colors.grey[theme.brightness == Brightness.dark
+                                    ? 700
+                                    : 50]
                             : inputTheme.fillColor,
                         // focusColor: Colors.white,
                         labelText: widget.label,
@@ -388,6 +393,30 @@ class PasswordShowBloc extends Bloc<PasswordShowEvent, PasswordIconState> {
     on<PasswordShowSetEvent>((event, emit) {
       emit(PasswordIconShowState(isShow: event.isShow));
     });
+  }
+}
+
+class InitCapTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text;
+
+    if (text.isEmpty) return newValue;
+
+    final formatted = text
+        .split(' ')
+        .map((word) => word.isEmpty
+            ? ''
+            : '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}')
+        .join(' ');
+
+    return newValue.copyWith(
+      text: formatted,
+      //selection: TextSelection.collapsed(offset: formatted.length),
+    );
   }
 }
 
