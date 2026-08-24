@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CScrollablePanel extends StatelessWidget {
   final List<Widget> children;
   final double minWidth;
-   
+
   final bool isVerticalScroll;
 
   const CScrollablePanel({
@@ -11,7 +11,6 @@ class CScrollablePanel extends StatelessWidget {
     required this.children,
     this.minWidth = 800,
     this.isVerticalScroll = false,
-    
   });
 
   @override
@@ -20,7 +19,7 @@ class CScrollablePanel extends StatelessWidget {
     final ScrollController _contr2 = ScrollController();
     return LayoutBuilder(builder: (context, c) {
       double parentWidth = c.maxWidth;
-
+      
       Widget columnWidget = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: children,

@@ -161,31 +161,18 @@ class _CTextBoxState extends State<CTextBox> {
                       keyboardType: widget.textInputType,
                       obscureText: !isObsText ? widget.isPassword : false,
                       inputFormatters: widget.isCapitalization
-                          ?( [upperCaseTextFormatter()]):widget.isIntCapitalization ? ([InitCapTextFormatter()])
-                          : widget.textInputType == TextInputType.multiline
-                              ? []
-                              : widget.textInputType ==
-                                      TextInputType.emailAddress
-                                  ? []
-                                  : widget.textInputType == TextInputType.text
-                                      ? []
-                                      : widget.textInputType ==
-                                              TextInputType.datetime
-                                          ? [
-                                              //dateFormatter,
-                                              LengthLimitingTextInputFormatter(
-                                                  10), // Limit to 10 characters
-                                              DateInputFormatter(),
-                                            ]
-                                          : [
-                                              widget.textInputType ==
-                                                      TextInputType.number
-                                                  ? FilteringTextInputFormatter
-                                                      .allow(
-                                                          RegExp(r'^\d+\.?\d*'))
-                                                  : FilteringTextInputFormatter
-                                                      .digitsOnly
-                                            ],
+    ? [upperCaseTextFormatter()]
+    : widget.isIntCapitalization
+        ? [InitCapTextFormatter()]
+        : widget.textInputType == TextInputType.datetime
+            ? [LengthLimitingTextInputFormatter(10), DateInputFormatter()]
+            : widget.textInputType?.index == TextInputType.number.index
+                ? [
+                    widget.textInputType?.decimal == true
+                        ? FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*'))
+                        : FilteringTextInputFormatter.digitsOnly,
+                  ]
+                : [],
                       maxLength: widget.maxlength,
                       maxLines: widget.maxLine,
                       style: widget.textStyle ??
