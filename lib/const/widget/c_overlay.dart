@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class COverlay extends StatefulWidget {
@@ -10,6 +9,7 @@ class COverlay extends StatefulWidget {
   final COverlayController? controller;
   final bool isCloseOutsideClick;
   final bool isNotDispose;
+  final Color? bgColor;
 
   const COverlay({
     super.key,
@@ -21,6 +21,7 @@ class COverlay extends StatefulWidget {
     this.iconSize = 16,
     this.isCloseOutsideClick = true,
     this.isNotDispose = false,
+    this.bgColor=null
   });
 
   @override
@@ -90,44 +91,44 @@ class _COverlayState extends State<COverlay>
   }
 
   OverlayEntry _createOverlayEntry() {
-  final screen = MediaQuery.of(context).size;
-  final RenderBox box = context.findRenderObject() as RenderBox;
-  final iconPos = box.localToGlobal(Offset.zero);
+    final screen = MediaQuery.of(context).size;
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    final iconPos = box.localToGlobal(Offset.zero);
 
-  final overlayWidth =
-      screen.width < (widget.width + 20) ? screen.width - 20 : widget.width;
+    final overlayWidth =
+        screen.width < (widget.width + 20) ? screen.width - 20 : widget.width;
 
-  final iconCenterX = iconPos.dx + (box.size.width / 2);
-  double left = iconCenterX - (overlayWidth / 2);
-  left = left.clamp(10.0, screen.width - overlayWidth - 10.0);
+    final iconCenterX = iconPos.dx + (box.size.width / 2);
+    double left = iconCenterX - (overlayWidth / 2);
+    left = left.clamp(10.0, screen.width - overlayWidth - 10.0);
 
-  Size? overlaySize;
+    Size? overlaySize;
 
-  return OverlayEntry(
-    builder: (context) {
-      return _MeasureSize(
-        onChange: (size) {
-          overlaySize = size;
-          final spaceBelow = screen.height - (iconPos.dy + box.size.height);
-          final shouldOpenUp = spaceBelow < size.height + 10;
+    return OverlayEntry(
+      builder: (context) {
+        return _MeasureSize(
+          onChange: (size) {
+            overlaySize = size;
+            final spaceBelow = screen.height - (iconPos.dy + box.size.height);
+            final shouldOpenUp = spaceBelow < size.height + 10;
 
-          if (shouldOpenUp != _openUpwards) {
-            _openUpwards = shouldOpenUp;
-            _overlayEntry?.markNeedsBuild();
-          }
-        },
-        child: Positioned(
-          top: _openUpwards && overlaySize != null
-              ? iconPos.dy - overlaySize!.height - 8 // precise top
-              : iconPos.dy + box.size.height + 8, // normal bottom
-          left: left,
-          width: overlayWidth,
-          child: _overlayContent(),
-        ),
-      );
-    },
-  );
-}
+            if (shouldOpenUp != _openUpwards) {
+              _openUpwards = shouldOpenUp;
+              _overlayEntry?.markNeedsBuild();
+            }
+          },
+          child: Positioned(
+            top: _openUpwards && overlaySize != null
+                ? iconPos.dy - overlaySize!.height - 8 // precise top
+                : iconPos.dy + box.size.height + 8, // normal bottom
+            left: left,
+            width: overlayWidth,
+            child: _overlayContent(widget.bgColor),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -155,7 +156,7 @@ class _COverlayState extends State<COverlay>
     );
   }
 
-  Widget _overlayContent() {
+  Widget _overlayContent(Color? bgColor) {
     return FadeTransition(
       opacity: _opacityAnimation,
       child: SlideTransition(
@@ -165,6 +166,7 @@ class _COverlayState extends State<COverlay>
             if (_isOpen && widget.isCloseOutsideClick) close();
           },
           child: Material(
+            color: bgColor,
             elevation: 8,
             borderRadius: BorderRadius.circular(widget.borderRadious),
             child: widget.child,

@@ -30,4 +30,5 @@ export 'const/widget/c_tree_line.dart';
 export 'const/widget/c_searchable_overlay.dart';
 export 'const/widget/c_overlay.dart';
 export 'const/widget/c_split_panel.dart';
+export 'const/widget/c_table_expad_scroll.dart';
 //All widget

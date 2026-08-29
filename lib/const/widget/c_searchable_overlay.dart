@@ -13,11 +13,15 @@ class CSearchOverlay extends StatefulWidget {
   const CSearchOverlay(
       {super.key,
       required this.controller,
-      this.icon = const Icon(Icons.search),
+      this.icon = const Icon(
+        Icons.search,
+        size: 22,
+      ),
       this.width = 320,
       this.onEditingComplete,
       this.onSubmitted,
-      this.onChange,this.isHover=true});
+      this.onChange,
+      this.isHover = true});
 
   @override
   State<CSearchOverlay> createState() => _CSearchOverlayState();
@@ -126,18 +130,34 @@ class _CSearchOverlayState extends State<CSearchOverlay>
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
       link: _layerLink,
-      child: !widget.isHover? IconButton(
-        hoverColor: Colors.transparent,
-        splashColor: Colors.transparent,
-        focusColor: Colors.transparent,
-        highlightColor:Colors.transparent,
-        icon: widget.icon,
-        onPressed: _toggleOverlay,
-      ): IconButton(
-        
-        icon: widget.icon,
-        onPressed: _toggleOverlay,
-      ),
+      child: !widget.isHover
+          ? IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.zero,
+              hoverColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              icon: widget.icon,
+              constraints: const BoxConstraints(
+                maxHeight: 20, // Set custom width
+                maxWidth: 20, // Set custom height
+              ),
+              iconSize: 18,
+              onPressed: _toggleOverlay,
+            )
+          : IconButton(
+visualDensity: VisualDensity.standard,
+               padding: EdgeInsets.all(4),
+              
+constraints: const BoxConstraints(
+                maxHeight: 28, // Set custom width
+                maxWidth: 28, // Set custom height
+              ),
+              iconSize: 16,
+              icon: widget.icon,
+              onPressed: _toggleOverlay,
+            ),
     );
   }
 }

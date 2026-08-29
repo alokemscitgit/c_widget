@@ -27,7 +27,7 @@ class CSearchableDropdown<T> extends StatefulWidget {
   bool isError;
   bool isDownIcon;
   EdgeInsetsGeometry? padding;
-  BorderRadius? borderRadius;
+  BorderRadius? borderRadious;
   Color? disabledColor;
 
   CSearchableDropdown(
@@ -47,7 +47,7 @@ class CSearchableDropdown<T> extends StatefulWidget {
       this.isDisable = false,
       this.bgColor = Colors.transparent,
       this.isError = false,
-      this.borderRadius,
+      this.borderRadious,
       this.isDownIcon = true,
       this.padding,
       this.onTap,this.disabledColor});
@@ -109,7 +109,7 @@ class _CSearchableDropdownState<T> extends State<CSearchableDropdown<T>> {
               
               issuffixIcon: widget.isDownIcon,
               isError: widget.isError,
-              borderRadious: widget.borderRadius,
+              borderRadious: widget.borderRadious,
               isDisable: widget.isDisable,
               height: widget.height,
               textAlign: widget.textAlign,
