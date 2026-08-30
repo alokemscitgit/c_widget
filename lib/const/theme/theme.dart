@@ -591,10 +591,10 @@ InputDecorationTheme _inputDecoration(
     focusedErrorBorder:
         OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
     enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: border, width: 1.1),
+        borderSide: BorderSide(color: border, width: 1.2),
         borderRadius: BorderRadius.circular(4)),
     disabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: border.withOpacity(0.5), width: 1.4),
+        borderSide: BorderSide(color: border.withOpacity(0.6), width: 1.4),
         borderRadius: BorderRadius.circular(6)),
     focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: focus, width: .9),

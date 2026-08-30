@@ -35,32 +35,39 @@ class CDatePicker extends StatefulWidget {
   BorderRadius? borderRadious;
   List<DateTime>? pridictDate;
   void Function(String) onSubmitted;
-  CDatePicker(
-      {super.key,
-      // ignore: non_constant_identifier_names
-      required this.controller,
-      this.label = '',
-      this.height = 26,
-      this.width = 130,
-      this.isBackDate = false,
-      this.isFilled = false,
-      this.textAlign = TextAlign.start,
-      this.focusNode,
-      this.isShowCurrentDate = false,
-      this.textfontWeight = FontWeight.w600,
-      this.textFontSize = 12,
-      this.isOnleClickDate = false,
-      this.isFutureDateDisplay = true,
-      this.hintText = 'DD/MM/YYYY',
-      this.isReadOnly = false,
-      this.onDateChanged,
-      this.startDate = '',
-      this.isError = false,
-      this.isDisable = false,
-      this.borderRadious,
-      void Function(String)? onSubmitted,
-      List<DateTime>? pridictDate})
-      : onSubmitted = onSubmitted ?? ((String v) {}),
+  Color? focusBgColor;
+  bool isfocusBGcolor;
+  Color? disabledColor;
+
+  CDatePicker({
+    super.key,
+    // ignore: non_constant_identifier_names
+    required this.controller,
+    this.label = '',
+    this.height = 26,
+    this.width = 130,
+    this.isBackDate = false,
+    this.isFilled = false,
+    this.textAlign = TextAlign.start,
+    this.focusNode,
+    this.isShowCurrentDate = false,
+    this.textfontWeight = FontWeight.w600,
+    this.textFontSize = 12,
+    this.isOnleClickDate = false,
+    this.isFutureDateDisplay = true,
+    this.hintText = 'DD/MM/YYYY',
+    this.isReadOnly = false,
+    this.onDateChanged,
+    this.startDate = '',
+    this.isError = false,
+    this.isDisable = false,
+    this.borderRadious,
+    this.focusBgColor,
+    this.isfocusBGcolor = true,
+    this.disabledColor,
+    void Function(String)? onSubmitted,
+    List<DateTime>? pridictDate,
+  })  : onSubmitted = onSubmitted ?? ((String v) {}),
         pridictDate = pridictDate ?? [];
 
   @override
@@ -69,28 +76,62 @@ class CDatePicker extends StatefulWidget {
 
 class _CDatePickerState extends State<CDatePicker> {
   bool isMonth = false;
+  late FocusNode _focusNode;
+  bool _isFocused = false;
+
   @override
   void initState() {
     super.initState();
+    _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode.addListener(_onFocusChange);
     if (widget.isShowCurrentDate) {
       widget.controller.text = widget.controller.text == ''
           ? DateFormat('dd/MM/yyyy').format(DateTime.now())
           : widget.controller.text;
+      widget.isError = false;
+    }
+  }
+
+  void _onFocusChange() {
+    if (mounted) {
       setState(() {
-        widget.isError = false;
+        _isFocused = !widget.isfocusBGcolor ? false : _focusNode.hasFocus;
       });
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    //String formattedDate =DateFormat('dd/MM/yyyy').format(DateTime.now());
-    if (widget.controller.text.length == 10) {
-      setState(() {
-        widget.isError = false;
-      });
-      //   print(widget.isError);
+  void dispose() {
+    if (widget.focusNode == null) {
+      _focusNode.dispose();
+    } else {
+      _focusNode.removeListener(_onFocusChange);
     }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final inputTheme = theme.inputDecorationTheme;
+
+    // High contrast light-yellow focus background
+    final Color focusBgColor = widget.focusBgColor ??
+        ((theme.brightness == Brightness.dark)
+            ? theme.primaryColor.withOpacity(0.3)
+            : Color.alphaBlend(
+                Colors.yellow.shade50.withOpacity(0.2),
+                Colors.white,
+              ));
+
+    final Color normalBgColor = inputTheme.fillColor ?? Colors.transparent;
+    final Color disabledBgColor = widget.disabledColor ??
+        Colors.grey[theme.brightness == Brightness.dark ? 700 : 50]!;
+
+    final Color resolvedFillColor = widget.isDisable
+        ? disabledBgColor
+        : (_isFocused ? focusBgColor : normalBgColor);
+
     return Stack(
       children: [
         CHoverMaskContainer(
@@ -98,20 +139,24 @@ class _CDatePickerState extends State<CDatePicker> {
           child: SizedBox(
             width: widget.width,
             height: widget.height,
-
             child: Stack(
               children: [
                 _cText(
                   context,
                   widget,
+                  focusNode: _focusNode, // Correctly bound state focus node
                   fun: (value) {
                     try {
                       if (value.length == 10) {
+                        if (widget.isError == true) {
+                          setState(() {
+                            widget.isError = false;
+                          });
+                        }
                         if (!widget.isBackDate!) {
                           var dt2 = DateFormat("dd/MM/yyyy")
                               .format(DateTime.now())
                               .toString();
-                          //  print(dt2);
                           if (!isValidDateRange(dt2, value)) {
                             setState(() {
                               widget.controller.text = '';
@@ -122,85 +167,72 @@ class _CDatePickerState extends State<CDatePicker> {
                     } catch (e) {}
                   },
                   onSubmitted: (p0) => widget.onSubmitted.call(p0),
+                  bgcolor: resolvedFillColor,
                 ),
               ],
             ),
-            //)
           ),
         ),
-        widget.isDisable
-            ? Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                top: 0,
-                child: Container(
-                  color: Colors.transparent,
-                ))
-            : SizedBox.shrink()
+        if (widget.isDisable)
+            Positioned.fill(
+            child: Container(
+              color: Colors.transparent,
+            ),
+          ),
       ],
     );
   }
 
-  Widget _cText(BuildContext context, dynamic widget,
-      {Function(String d)? fun, void Function(String)? onSubmitted}) {
+  Widget _cText(
+    BuildContext context,
+    dynamic widget, {
+    required FocusNode focusNode,
+    Function(String d)? fun,
+    void Function(String)? onSubmitted,
+    Color? bgcolor,
+  }) {
     final theme = Theme.of(context);
     final inputTheme = theme.inputDecorationTheme;
     final resolved =
-        (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 12))
+        (inputTheme.contentPadding ?? const EdgeInsets.symmetric(horizontal: 12))
             .resolve(Directionality.of(context));
-    final scaled = resolved.copyWith(
-      right: 2,
-    );
+    final scaled = resolved.copyWith(right: 2);
+
     return TextFormField(
       onFieldSubmitted: (value) => onSubmitted?.call(value),
-      focusNode: widget.focusNode,
-
+      focusNode: focusNode, // Uses the managed internal FocusNode
       controller: widget.controller,
-
       style: theme.textTheme.bodyMedium,
       textAlignVertical: TextAlignVertical.center,
       textAlign: widget.textAlign!,
       decoration: InputDecoration(
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
-        // fillColor: Colors.white,
         filled: true,
-        fillColor: widget.isDisable
-            ? Colors.grey[theme.brightness == Brightness.dark ? 600 : 50]
-            : inputTheme.fillColor,
-        // focusColor: Colors.white,
-        labelText: widget.label==''?null:widget.label,
+        fillColor: bgcolor,
+        labelText: widget.label == '' ? null : widget.label,
         labelStyle: clabelStyle(context, widget.isError),
         hintText: widget.hintText,
- 
-                  // hintText: widget.,
-            
-                //  hintStyle: theme.textTheme.labelSmall,
-       hintStyle: theme.textTheme.labelSmall?.copyWith(
-  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-),
+        hintStyle: theme.textTheme.labelSmall?.copyWith(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+        ),
         counterText: '',
         border: CBorders.border(
             context: context,
             borderRadious: widget.borderRadious,
             isError: widget.isError,
             isDisabled: widget.isDisable),
-
         focusedBorder: CBorders.focused(context,
             borderRadious: widget.borderRadious, isError: widget.isError),
         enabledBorder: CBorders.enabled(context,
             borderRadious: widget.borderRadious, isError: widget.isError),
         disabledBorder:
             CBorders.disabled(context, borderRadious: widget.borderRadious),
-
         contentPadding: scaled,
-
         suffixIcon: PopupMenuButton<int>(
           padding: EdgeInsets.zero,
           menuPadding: EdgeInsets.zero,
           borderRadius: BorderRadius.circular(8),
-          // shadowColor: appGray100,
           popUpAnimationStyle: AnimationStyle(
               curve: Curves.bounceOut,
               duration: const Duration(milliseconds: 300)),
@@ -225,7 +257,6 @@ class _CDatePickerState extends State<CDatePicker> {
                               .parse(widget.controller.text)
                           : DateTime.now();
                     } catch (e) {
-                      // Handle parse exception, return null or current date
                       return null;
                     }
                   }(),
@@ -238,7 +269,6 @@ class _CDatePickerState extends State<CDatePicker> {
                               ? widget.pridictDate.first
                               : DateTime.now();
                     } catch (e) {
-                      // Handle parse exception, return current date as fallback
                       return widget.pridictDate.isNotEmpty
                           ? widget.pridictDate.first
                           : DateTime.now();
@@ -249,7 +279,8 @@ class _CDatePickerState extends State<CDatePicker> {
                       : widget.isBackDate!
                           ? widget.startDate.toString().length < 10
                               ? DateTime(1900)
-                              : DateFormat("dd/MM/yyyy").parse(widget.startDate)
+                              : DateFormat("dd/MM/yyyy")
+                                  .parse(widget.startDate)
                           : DateTime.now(),
                   lastDate: widget.pridictDate.isNotEmpty
                       ? widget.pridictDate.last
@@ -280,12 +311,10 @@ class _CDatePickerState extends State<CDatePicker> {
                         value.month != fromDate.month &&
                         isMonth) {
                       isMonth = false;
-                      //return;
                     }
                     String formattedDate =
                         DateFormat('dd/MM/yyyy').format(value);
 
-                    //  print(formattedDate);
                     setState(() {
                       widget.controller.text = formattedDate;
                       widget.isError = false;
@@ -293,34 +322,20 @@ class _CDatePickerState extends State<CDatePicker> {
                         Navigator.of(context).pop();
                       }
                       if (widget.onDateChanged != null) {
-                        widget.onDateChanged(value);
+                        widget.onDateChanged!(value);
                       }
-
                       isMonth = false;
                     });
                   },
-
                   selectableDayPredicate: (d) =>
                       widget.pridictDate.isEmpty ||
                       widget.pridictDate.any((x) =>
                           x.year == d.year &&
                           x.month == d.month &&
                           x.day == d.day),
-
-                  // selectableDayPredicate: (day) {
-                  //   // print(widget.pridictDate.any((d) =>
-                  //   //     d.year == day.year &&
-                  //   //     d.month == day.month &&
-                  //   //     d.day == day.day));
-                  //   return widget.pridictDate.isEmpty?true: widget.pridictDate.any((d) =>
-                  //           d.year == day.year &&
-                  //           d.month == day.month &&
-                  //           d.day == day.day);
-                  // },
                 ),
               ),
             ),
-            //),
           ],
           child: Padding(
             padding: const EdgeInsets.only(right: 4),
@@ -333,18 +348,15 @@ class _CDatePickerState extends State<CDatePicker> {
         ),
       ),
       onChanged: (value) {
-       // widget.controller.text = value;
         if (fun != null) {
           fun(value);
         }
       },
-      readOnly: widget.isReadOnly,
+      readOnly: widget.isReadOnly ?? false,
       inputFormatters: [
-        //dateFormatter,
-        LengthLimitingTextInputFormatter(10), // Limit to 10 characters
+        LengthLimitingTextInputFormatter(10),
         DateInputFormatter(),
       ],
-      //  enabled: false,
       enableInteractiveSelection: false,
     );
   }
@@ -355,6 +367,6 @@ bool isValidDateRange(String fdate, String tdate) {
     final format = DateFormat('dd/MM/yyyy');
     return !format.parse(tdate).isBefore(format.parse(fdate));
   } catch (_) {
-    return false; // invalid date format
+    return false;
   }
 }

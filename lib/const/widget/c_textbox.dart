@@ -39,6 +39,8 @@ class CTextBox extends StatefulWidget {
   TextStyle? textStyle;
   bool? isMandatorySymbol;
   Color? disabledColor;
+  Color? focusBgColor;
+  bool isfocusBGcolor;
   CTextBox(
       {super.key,
       this.label = '',
@@ -71,7 +73,8 @@ class CTextBox extends StatefulWidget {
       this.labelStyle,
       this.textStyle,
       this.disabledColor,
-      this.isIntCapitalization=false,
+      this.isIntCapitalization = false,
+      this.focusBgColor,this.isfocusBGcolor=true,
       this.onTap})
       : onSubmitted = onSubmitted ?? ((String v) {}),
         onEditingComplete = onEditingComplete ?? (() {});
@@ -81,36 +84,63 @@ class CTextBox extends StatefulWidget {
 }
 
 class _CTextBoxState extends State<CTextBox> {
+  late FocusNode _focusNode;
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Use passed focusNode or create a local fallback
+    _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (mounted) {
+      setState(() {
+        _isFocused = !widget.isfocusBGcolor?false:  _focusNode.hasFocus;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    // Only dispose if created locally
+    if (widget.focusNode == null) {
+      _focusNode.dispose();
+    } else {
+      _focusNode.removeListener(_onFocusChange);
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final inputTheme = theme.inputDecorationTheme;
-    final resolved =
-        (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 12))
-            .resolve(Directionality.of(context));
-    final scaled = resolved.copyWith(
-      right: widget.issuffixIcon ? 0 : 4,
-    );
+    final resolved = (inputTheme.contentPadding ??
+            const EdgeInsets.symmetric(horizontal: 12))
+        .resolve(Directionality.of(context));
+
     bool isObsText = false;
-    if (widget.isAutoValidate) {
-      if (widget.controller.text.isEmpty) {
-        setState(() {
-          widget.isError = false;
-        });
-      }
-    }
-    if (widget.isError) {
-      if (widget.controller.text.isEmpty) {
-        setState(() {
-          widget.isError = true;
-        });
-      }
-    }
-    if (widget.controller.text.isNotEmpty) {
-      setState(() {
-        widget.isError = false;
-      });
-    }
+
+    // Define background color based on Focus and Disabled states
+    final Color focusBgColor = widget.focusBgColor ??
+        ((Theme.of(context).brightness == Brightness.dark)
+            ? theme.primaryColor.withOpacity(0.3)
+            : Color.alphaBlend(
+                Colors.yellow.shade50.withOpacity(0.2),
+                Colors.white,
+              )); // Focus/Select color
+
+    final Color normalBgColor = inputTheme.fillColor ?? Colors.transparent;
+    final Color disabledBgColor = widget.disabledColor ??
+        Colors.grey[theme.brightness == Brightness.dark ? 700 : 50]!;
+
+    final Color resolvedFillColor = widget.isDisable
+        ? disabledBgColor
+        : (_isFocused ? focusBgColor : normalBgColor);
+
     return BlocProvider(
       create: (context) => PasswordShowBloc(),
       child: CHoverMaskContainer(
@@ -127,6 +157,7 @@ class _CTextBoxState extends State<CTextBox> {
                 children: [
                   Expanded(
                     child: TextField(
+                      focusNode: _focusNode,
                       autofocus: widget.isAutofocus,
                       textInputAction:
                           widget.textInputType == TextInputType.multiline
@@ -137,75 +168,60 @@ class _CTextBoxState extends State<CTextBox> {
                               ? TextDirection.ltr
                               : null,
                       autocorrect: widget.iSAutoCorrected,
-                      textCapitalization: widget.isCapitalization == true
+                      textCapitalization: widget.isCapitalization
                           ? TextCapitalization.characters
                           : TextCapitalization.none,
-                      focusNode: widget.focusNode,
                       enabled: !widget.isDisable,
                       readOnly: widget.isReadonly,
                       onChanged: (value) {
-                        setState(() {
-                          widget.isError = false;
-                        });
-                        if (widget.onChange != null) {
-                          widget.onChange!(value);
+                        if (widget.isError) {
+                          setState(() => widget.isError = false);
                         }
+                        widget.onChange?.call(value);
                       },
-                      onSubmitted: (v) {
-                        widget.onSubmitted(v);
-                      },
-                      onEditingComplete: () {
-                        widget.onEditingComplete();
-                      },
+                      onSubmitted: widget.onSubmitted,
+                      onEditingComplete: widget.onEditingComplete,
                       onTap: () => widget.onTap?.call(),
                       keyboardType: widget.textInputType,
                       obscureText: !isObsText ? widget.isPassword : false,
                       inputFormatters: widget.isCapitalization
-    ? [upperCaseTextFormatter()]
-    : widget.isIntCapitalization
-        ? [InitCapTextFormatter()]
-        : widget.textInputType == TextInputType.datetime
-            ? [LengthLimitingTextInputFormatter(10), DateInputFormatter()]
-            : widget.textInputType?.index == TextInputType.number.index
-                ? [
-                    widget.textInputType?.decimal == true
-                        ? FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*'))
-                        : FilteringTextInputFormatter.digitsOnly,
-                  ]
-                : [],
+                          ? [upperCaseTextFormatter()]
+                          : widget.isIntCapitalization
+                              ? [InitCapTextFormatter()]
+                              : widget.textInputType == TextInputType.datetime
+                                  ? [
+                                      LengthLimitingTextInputFormatter(10),
+                                      DateInputFormatter()
+                                    ]
+                                  : widget.textInputType?.index ==
+                                          TextInputType.number.index
+                                      ? [
+                                          widget.textInputType?.decimal == true
+                                              ? FilteringTextInputFormatter
+                                                  .allow(RegExp(r'^\d+\.?\d*'))
+                                              : FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                        ]
+                                      : [],
                       maxLength: widget.maxlength,
                       maxLines: widget.maxLine,
-                      style: widget.textStyle ??
-                          theme.textTheme.bodyMedium!.copyWith(),
+                      style: widget.textStyle ?? theme.textTheme.bodyMedium,
                       textAlignVertical: TextAlignVertical.center,
                       textAlign: widget.textAlign!,
                       decoration: InputDecoration(
                         hoverColor: Colors.transparent,
                         focusColor: Colors.transparent,
-                        // fillColor: Colors.white,
                         filled: true,
-                        fillColor: widget.isDisable
-                            ? widget.disabledColor ??
-                                Colors.grey[theme.brightness == Brightness.dark
-                                    ? 700
-                                    : 50]
-                            : inputTheme.fillColor,
-                        // focusColor: Colors.white,
+                        fillColor:
+                            resolvedFillColor, // Applied dynamic background color
                         labelText: widget.label,
                         labelStyle: widget.labelStyle ??
                             clabelStyle(context, widget.isError),
-                        // labelStyle: widget.isError
-                        //     ? inputTheme.labelStyle!.copyWith(color: Colors.red)
-                        //     : inputTheme.labelStyle!.copyWith(
-                        //         color: inputTheme.labelStyle!.color!.withOpacity(.6)
-                        //         ),
                         hintText: widget.hintText,
-
                         hintStyle: theme.textTheme.labelSmall,
                         counterText: '',
                         border: CBorders.border(
                             context: context,
-                            //borderRadious: widget.borderRadious??AppThemeColors.inputBorder(context).borderRadius,
                             isError: widget.isError,
                             isDisabled: widget.isDisable),
                         focusedBorder: CBorders.focused(context,
@@ -226,10 +242,9 @@ class _CTextBoxState extends State<CTextBox> {
                                   !isObsText
                                       ? Icons.visibility_off
                                       : Icons.visibility,
-                                  size:
-                                      (((theme.textTheme.bodyLarge!.fontSize) ??
-                                              16) *
-                                          1.2),
+                                  size: ((theme.textTheme.bodyLarge!.fontSize ??
+                                          16) *
+                                      1.2),
                                   color: theme.colorScheme.secondary,
                                 ),
                               )
@@ -239,8 +254,8 @@ class _CTextBoxState extends State<CTextBox> {
                                     child: Icon(
                                       widget.suffixIcon ??
                                           Icons.keyboard_arrow_down,
-                                      size: (((theme.textTheme.bodyLarge!
-                                                  .fontSize) ??
+                                      size: ((theme.textTheme.bodyLarge!
+                                                  .fontSize ??
                                               16) *
                                           1.5),
                                       color: theme.colorScheme.secondary,
@@ -250,18 +265,13 @@ class _CTextBoxState extends State<CTextBox> {
                         prefixIcon: widget.isSearchBox
                             ? Icon(
                                 Icons.search_rounded,
-                                size: (((theme.textTheme.bodyLarge!.fontSize) ??
+                                size: ((theme.textTheme.bodyLarge!.fontSize ??
                                         14) *
                                     1.2),
                                 color: theme.colorScheme.secondary,
                               )
                             : null,
                         contentPadding: resolved,
-                        //const EdgeInsets.only(
-                        //    // bottom: 6,
-                        //   // top: 2,
-                        //     left: 8,
-                        //     right: 8)
                       ),
                       controller: widget.controller,
                     ),
@@ -269,8 +279,8 @@ class _CTextBoxState extends State<CTextBox> {
                   if (widget.isMandatorySymbol ?? false)
                     Text(
                       '*',
-                      style: (theme.textTheme.bodyLarge!
-                          .copyWith(color: clabelStyle(context, true).color)),
+                      style: theme.textTheme.bodyLarge!
+                          .copyWith(color: clabelStyle(context, true).color),
                     )
                 ],
               );
@@ -281,6 +291,208 @@ class _CTextBoxState extends State<CTextBox> {
     );
   }
 }
+
+// class _CTextBoxState extends State<CTextBox> {
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
+//     final inputTheme = theme.inputDecorationTheme;
+//     final resolved =
+//         (inputTheme.contentPadding ?? EdgeInsets.symmetric(horizontal: 12))
+//             .resolve(Directionality.of(context));
+//     final scaled = resolved.copyWith(
+//       right: widget.issuffixIcon ? 0 : 4,
+//     );
+//     bool isObsText = false;
+//     if (widget.isAutoValidate) {
+//       if (widget.controller.text.isEmpty) {
+//         setState(() {
+//           widget.isError = false;
+//         });
+//       }
+//     }
+//     if (widget.isError) {
+//       if (widget.controller.text.isEmpty) {
+//         setState(() {
+//           widget.isError = true;
+//         });
+//       }
+//     }
+//     if (widget.controller.text.isNotEmpty) {
+//       setState(() {
+//         widget.isError = false;
+//       });
+//     }
+//     return BlocProvider(
+//       create: (context) => PasswordShowBloc(),
+//       child: CHoverMaskContainer(
+//         hoverColor: widget.isDisable ? Colors.transparent : null,
+//         child: SizedBox(
+//           width: widget.width,
+//           height: widget.height,
+//           child: BlocBuilder<PasswordShowBloc, PasswordIconState>(
+//             builder: (context, state) {
+//               if (state is PasswordIconShowState) {
+//                 isObsText = state.isShow;
+//               }
+//               return Row(
+//                 children: [
+//                   Expanded(
+//                     child: TextField(
+//                       autofocus: widget.isAutofocus,
+//                       textInputAction:
+//                           widget.textInputType == TextInputType.multiline
+//                               ? null
+//                               : TextInputAction.next,
+//                       textDirection:
+//                           widget.textInputType == TextInputType.multiline
+//                               ? TextDirection.ltr
+//                               : null,
+//                       autocorrect: widget.iSAutoCorrected,
+//                       textCapitalization: widget.isCapitalization == true
+//                           ? TextCapitalization.characters
+//                           : TextCapitalization.none,
+//                       focusNode: widget.focusNode,
+//                       enabled: !widget.isDisable,
+//                       readOnly: widget.isReadonly,
+//                       onChanged: (value) {
+//                         setState(() {
+//                           widget.isError = false;
+//                         });
+//                         if (widget.onChange != null) {
+//                           widget.onChange!(value);
+//                         }
+//                       },
+//                       onSubmitted: (v) {
+//                         widget.onSubmitted(v);
+//                       },
+//                       onEditingComplete: () {
+//                         widget.onEditingComplete();
+//                       },
+//                       onTap: () => widget.onTap?.call(),
+//                       keyboardType: widget.textInputType,
+//                       obscureText: !isObsText ? widget.isPassword : false,
+//                       inputFormatters: widget.isCapitalization
+//     ? [upperCaseTextFormatter()]
+//     : widget.isIntCapitalization
+//         ? [InitCapTextFormatter()]
+//         : widget.textInputType == TextInputType.datetime
+//             ? [LengthLimitingTextInputFormatter(10), DateInputFormatter()]
+//             : widget.textInputType?.index == TextInputType.number.index
+//                 ? [
+//                     widget.textInputType?.decimal == true
+//                         ? FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*'))
+//                         : FilteringTextInputFormatter.digitsOnly,
+//                   ]
+//                 : [],
+//                       maxLength: widget.maxlength,
+//                       maxLines: widget.maxLine,
+//                       style: widget.textStyle ??
+//                           theme.textTheme.bodyMedium!.copyWith(),
+//                       textAlignVertical: TextAlignVertical.center,
+//                       textAlign: widget.textAlign!,
+//                       decoration: InputDecoration(
+//                         hoverColor: Colors.transparent,
+//                         focusColor: Colors.transparent,
+//                         // fillColor: Colors.white,
+//                         filled: true,
+//                         fillColor: widget.isDisable
+//                             ? widget.disabledColor ??
+//                                 Colors.grey[theme.brightness == Brightness.dark
+//                                     ? 700
+//                                     : 50]
+//                             : inputTheme.fillColor,
+//                         // focusColor: Colors.white,
+//                         labelText: widget.label,
+//                         labelStyle: widget.labelStyle ??
+//                             clabelStyle(context, widget.isError),
+//                         // labelStyle: widget.isError
+//                         //     ? inputTheme.labelStyle!.copyWith(color: Colors.red)
+//                         //     : inputTheme.labelStyle!.copyWith(
+//                         //         color: inputTheme.labelStyle!.color!.withOpacity(.6)
+//                         //         ),
+//                         hintText: widget.hintText,
+
+//                         hintStyle: theme.textTheme.labelSmall,
+//                         counterText: '',
+//                         border: CBorders.border(
+//                             context: context,
+//                             //borderRadious: widget.borderRadious??AppThemeColors.inputBorder(context).borderRadius,
+//                             isError: widget.isError,
+//                             isDisabled: widget.isDisable),
+//                         focusedBorder: CBorders.focused(context,
+//                             borderRadious: widget.borderRadious,
+//                             isError: widget.isError),
+//                         enabledBorder: CBorders.enabled(context,
+//                             borderRadious: widget.borderRadious,
+//                             isError: widget.isError),
+//                         disabledBorder: CBorders.disabled(context,
+//                             borderRadious: widget.borderRadious),
+//                         suffixIcon: widget.isPassword
+//                             ? InkWell(
+//                                 onTap: () {
+//                                   context.read<PasswordShowBloc>().add(
+//                                       PasswordShowSetEvent(isShow: !isObsText));
+//                                 },
+//                                 child: Icon(
+//                                   !isObsText
+//                                       ? Icons.visibility_off
+//                                       : Icons.visibility,
+//                                   size:
+//                                       (((theme.textTheme.bodyLarge!.fontSize) ??
+//                                               16) *
+//                                           1.2),
+//                                   color: theme.colorScheme.secondary,
+//                                 ),
+//                               )
+//                             : widget.issuffixIcon
+//                                 ? MouseRegion(
+//                                     cursor: SystemMouseCursors.click,
+//                                     child: Icon(
+//                                       widget.suffixIcon ??
+//                                           Icons.keyboard_arrow_down,
+//                                       size: (((theme.textTheme.bodyLarge!
+//                                                   .fontSize) ??
+//                                               16) *
+//                                           1.5),
+//                                       color: theme.colorScheme.secondary,
+//                                     ),
+//                                   )
+//                                 : null,
+//                         prefixIcon: widget.isSearchBox
+//                             ? Icon(
+//                                 Icons.search_rounded,
+//                                 size: (((theme.textTheme.bodyLarge!.fontSize) ??
+//                                         14) *
+//                                     1.2),
+//                                 color: theme.colorScheme.secondary,
+//                               )
+//                             : null,
+//                         contentPadding: resolved,
+//                         //const EdgeInsets.only(
+//                         //    // bottom: 6,
+//                         //   // top: 2,
+//                         //     left: 8,
+//                         //     right: 8)
+//                       ),
+//                       controller: widget.controller,
+//                     ),
+//                   ),
+//                   if (widget.isMandatorySymbol ?? false)
+//                     Text(
+//                       '*',
+//                       style: (theme.textTheme.bodyLarge!
+//                           .copyWith(color: clabelStyle(context, true).color)),
+//                     )
+//                 ],
+//               );
+//             },
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class DateInputFormatter extends TextInputFormatter {
   @override
