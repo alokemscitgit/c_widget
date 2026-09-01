@@ -98,23 +98,23 @@ class HeaderTextBuilder {
   }
 
   HeaderTextBuilder asThemeM(BuildContext context) {
-    _color = AppThemeColors.primary(context);
-    _fontSize = AppThemeColors.bodyMedium(context).fontSize ?? 9.5;
-    _fontWeight = AppThemeColors.bodyMedium(context).fontWeight!;
+    _color =  context.color.primary;
+    _fontSize = context.style.bodyMedium.style.fontSize ?? 9.5;
+    _fontWeight = context.style.bodyMedium.style.fontWeight!;
     return this;
   }
 
   HeaderTextBuilder asThemeL(BuildContext context) {
-    _color = AppThemeColors.primary(context);
-    _fontSize = AppThemeColors.bodyLarge(context).fontSize ?? 9.5;
-    _fontWeight = AppThemeColors.bodyLarge(context).fontWeight!;
+    _color = context.color.primary;
+    _fontSize = context.style.bodyLarge.style.fontSize ?? 9.5;
+    _fontWeight = context.style.bodyLarge.style.fontWeight!;
     return this;
   }
 
   HeaderTextBuilder asThemeS(BuildContext context) {
-    _color = AppThemeColors.primary(context);
-    _fontSize = AppThemeColors.bodySmall(context).fontSize ?? 9.5;
-    _fontWeight = AppThemeColors.bodySmall(context).fontWeight!;
+    _color = context.color.primary;
+    _fontSize = context.style.bodySmall.style.fontSize ?? 9.5;
+    _fontWeight =context.style.bodySmall.style.fontWeight!;
 //       bgColor: _bgColor,
     return this;
   }
@@ -308,27 +308,27 @@ class TableCellTextBuilder {
   }
 
   TableCellTextBuilder asThemeM(BuildContext context) {
-    _fontColor = (AppThemeColors.bodyMedium(context).color as Color);
-    _fontSize = AppThemeColors.bodyMedium(context).fontSize ?? 9.5;
-    _fontWeight = AppThemeColors.bodyMedium(context).fontWeight!;
+    _fontColor = (context.style.bodyMedium.style .color as Color);
+    _fontSize = context.style.bodyMedium.style .fontSize ?? 9.5;
+    _fontWeight = context.style.bodyMedium.style .fontWeight!;
     _borderColor = safeOutlineBorder(context).borderSide.color;
     _borderWidth = safeOutlineBorder(context).borderSide.width;
     return this;
   }
 
   TableCellTextBuilder asThemeL(BuildContext context) {
-    _fontColor = (AppThemeColors.bodyLarge(context).color as Color);
-    _fontSize = AppThemeColors.bodyLarge(context).fontSize ?? 9.5;
-    _fontWeight = AppThemeColors.bodyLarge(context).fontWeight!;
+    _fontColor =   context.style.bodyMedium.style.color as Color;
+    _fontSize =  context.style.bodyMedium.style.fontSize ?? 9.5;
+    _fontWeight =  context.style.bodyMedium.style.fontWeight!;
     _borderColor = safeOutlineBorder(context).borderSide.color;
     _borderWidth = safeOutlineBorder(context).borderSide.width;
     return this;
   }
 
   TableCellTextBuilder asThemeS(BuildContext context) {
-    _fontColor = (AppThemeColors.bodySmall(context).color as Color);
-    _fontSize = AppThemeColors.bodySmall(context).fontSize ?? 9.5;
-    _fontWeight = AppThemeColors.bodySmall(context).fontWeight!;
+    _fontColor =  context.style.bodySmall.style.color as Color;
+    _fontSize = context.style.bodySmall.style.fontSize ?? 9.5;
+    _fontWeight = context.style.bodySmall.style.fontWeight!;
     _borderColor = safeOutlineBorder(context).borderSide.color;
     _borderWidth = safeOutlineBorder(context).borderSide.width;
 //       bgColor: _bgColor,
@@ -395,7 +395,7 @@ class CustomTableColumnHeaderBlackNew extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color colotH = AppThemeColors.secondary(context);
+    Color colotH = context.color.secondary;
     HSLColor hslColor = HSLColor.fromColor(colotH);
     colotH = hslColor
         .withLightness((hslColor.lightness - 0.2).clamp(0.0, 1.0))
@@ -425,7 +425,7 @@ __headerContainer(String text, AlignmentGeometry alignment, double fontSize,
         Color? borderRightColor = null,
         double? borderRightWidth = null}) =>
     Builder(builder: (context) {
-      Color colotH = AppThemeColors.secondary(context);
+      Color colotH = context.color.secondary;
       return Container(
         // color: bgColor,
         decoration: BoxDecoration(

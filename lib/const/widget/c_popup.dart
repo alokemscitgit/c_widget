@@ -51,7 +51,7 @@ class __cPopUpState extends State<_cPopUp> {
   @override
   Widget build(BuildContext context) {
     final Color color =
-        widget.hoverColor ?? AppThemeColors.scaffoldBackground(context);
+        widget.hoverColor ?? context.color.scaffoldBackground;
     return MouseRegion(
       onEnter: (_) => setState(() {
         hover = true;

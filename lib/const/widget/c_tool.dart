@@ -88,7 +88,7 @@ class _CToolState extends State<CTool> {
             : buttonFg;
 
     final shadow = BoxShadow(
-      color: AppThemeColors.scaffoldBackground(context),
+      color: context.color.scaffoldBackground,
       blurRadius: isHovering ? 3 : 2,
     );
 
@@ -122,7 +122,7 @@ onExit: (_) {
         message: tooltipText,
         waitDuration: const Duration(milliseconds: 300),
         showDuration: const Duration(seconds: 2),
-        textStyle: AppThemeColors.bodySmall(context)
+        textStyle:context.style.bodySmall .style
             .copyWith(color: buttonFg),
         decoration: BoxDecoration(
           color: Colors.black87,
@@ -272,6 +272,27 @@ String _getText(ToolMenuSet toolMenuSet) {
       return ''; // Default text
   }
 }
+
+
+extension ToolMenuSetNullableX on ToolMenuSet? {
+  bool get edit => this == ToolMenuSet.edit;
+  bool get undo => this == ToolMenuSet.undo;
+  bool get save => this == ToolMenuSet.save;
+   bool get update => this == ToolMenuSet.update;
+   bool get delete => this == ToolMenuSet.delete;
+   bool get close => this == ToolMenuSet.close;
+   bool get show => this == ToolMenuSet.show;
+   bool get print => this == ToolMenuSet.print;
+   bool get search => this == ToolMenuSet.search;
+   bool get file => this == ToolMenuSet.file;
+   bool get approve => this == ToolMenuSet.approve;
+   bool get post => this == ToolMenuSet.post;
+   bool get export => this == ToolMenuSet.export;
+   bool get cancel => this == ToolMenuSet.cancel;
+   bool get reload => this == ToolMenuSet.refresh;
+}
+
+
 
 Widget _customHorizontalDivider(
   BuildContext context, [

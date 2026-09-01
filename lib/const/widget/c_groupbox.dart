@@ -11,7 +11,8 @@ class CGroupBox extends StatelessWidget {
       this.borderRadius = 8,
       this.height = 0,
       this.padding = const EdgeInsets.symmetric(horizontal: 5, vertical: 6),
-      this.bgColor,this.labelColor});
+      this.bgColor,
+      this.labelColor,this.labelGroupFontSize=12});
 
   final String headerText;
   final List<Widget> children;
@@ -21,14 +22,14 @@ class CGroupBox extends StatelessWidget {
   final EdgeInsets padding;
   final Color? bgColor;
   final Color? labelColor;
+  final double labelGroupFontSize;
 
   @override
   Widget build(BuildContext context) {
-     
     final sBordr = safeOutlineBorder(context);
     final borderColor = sBordr.borderSide.color;
     final labelStyle = clabelStyle(context, false);
-    final labelFontSize =  9.6 * AppThemeColors.scale(context);
+    final labelFontSize = labelGroupFontSize * context.style.scale;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -37,27 +38,34 @@ class CGroupBox extends StatelessWidget {
           height: height > 0 ? height : null,
           padding: padding,
           decoration: BoxDecoration(
-            color: bgColor ?? AppThemeColors.scaffoldBackground(context).withAlpha(250).withOpacity(0.95) ,
+            color: bgColor ??
+                context.color.scaffoldBackground
+                    .withAlpha(250)
+                    .withOpacity(0.95),
             borderRadius: BorderRadius.circular(borderRadius),
-            border: borderWidth==0?null:  Border.all(
-              color: borderColor,
-              width: borderWidth ?? 1,
-            ),
-            boxShadow:  borderWidth==0?[]:  bgColor==Colors.transparent?[]:  [
-            BoxShadow(
-                color: AppThemeColors.primary(context),
-                spreadRadius: -4,
-                blurRadius: 6,
-              ),
-            ],
+            border: borderWidth == 0
+                ? null
+                : Border.all(
+                    color: borderColor,
+                    width: borderWidth ?? 1,
+                  ),
+            boxShadow: borderWidth == 0
+                ? []
+                : bgColor == Colors.transparent
+                    ? []
+                    : [
+                        BoxShadow(
+                          color: context.color.primary,
+                          spreadRadius: -4,
+                          blurRadius: 6,
+                        ),
+                      ],
           ),
           child: FocusTraversalGroup(
             policy: WidgetOrderTraversalPolicy(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(),
-                ...children],
+              children: [Row(), ...children],
             ),
           ),
         ),
@@ -68,7 +76,7 @@ class CGroupBox extends StatelessWidget {
           child: headerText.isEmpty
               ? SizedBox.shrink()
               : Container(
-                  color: bgColor ?? AppThemeColors.scaffoldBackground(context),
+                  color: bgColor ?? context.color.scaffoldBackground,
                   height: 2,
                   padding: const EdgeInsets.only(
                     left: 2,
@@ -76,10 +84,9 @@ class CGroupBox extends StatelessWidget {
                   child: Text(
                     headerText,
                     style: labelStyle.copyWith(
-                      color: Colors.transparent,
-                      fontSize: labelFontSize,
-                      fontWeight: FontWeight.bold
-                    ),
+                        color: Colors.transparent,
+                        fontSize: labelFontSize,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
         ),
@@ -94,11 +101,10 @@ class CGroupBox extends StatelessWidget {
                   child: Text(
                     headerText,
                     style: labelStyle.copyWith(
-                      color:labelColor?? labelStyle.color!.withOpacity(.6),
-                      fontSize: labelFontSize,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic
-                    ),
+                        color: labelColor ?? labelStyle.color!.withOpacity(.6),
+                        fontSize: labelFontSize,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic),
                   ),
                 ),
         ),

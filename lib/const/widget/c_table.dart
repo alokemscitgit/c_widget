@@ -29,9 +29,9 @@ class CTableGeneratorFaster extends StatelessWidget {
     decorationHeader = decorationHeader ??
         BoxDecoration(
           border: Border.all(
-              width: AppThemeColors.borderWidth(context) * .8,
-              color: AppThemeColors(context).borderColor),
-          color: AppThemeColors(context).hoverBg,
+              width: context.style.borderWidth() * .8,
+              color: context.color.borderColor) ,
+          color: context.color.hoverBg,
          
         );
     final ScrollController _contr = ScrollController();
@@ -95,9 +95,9 @@ class CustomTableGeneratorFaster extends StatelessWidget {
     decorationHeader = decorationHeader ??
         BoxDecoration(
           border: Border.all(
-              width: AppThemeColors.borderWidth(context) * .8,
-              color: AppThemeColors(context).borderColor),
-          color: AppThemeColors(context).hoverBg,
+              width:context.style.borderWidth()  * .8,
+              color: context.color.borderColor),
+          color: context.color.hoverBg,
           // borderRadius: BorderRadius.only(
           //     topRight:
           //         sBorder.borderRadius.topRight,
@@ -182,12 +182,12 @@ class _CustomTableHeaderWeb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = AppThemeColors(context);
+     
 
     return Table(
       border: TableBorder.all(
-        color: theme.borderColor,
-        width: AppThemeColors.borderWidth(context) * .8,
+        color: context.color.borderColor,
+        width: context.style.borderWidth()  * .8,
       ),
       columnWidths: fixed
           ? columnWidthFixed(
@@ -202,12 +202,12 @@ class _CustomTableHeaderWeb extends StatelessWidget {
           decoration: transparent
               ? null
               : BoxDecoration(
-                  color: theme.hoverBg,
+                  color: context.color.hoverBg,
                   borderRadius: BorderRadius.only(
-                    topLeft: AppThemeColors.inputBorder(context)
+                    topLeft: context.style.inputBorder()
                         .borderRadius
                         .topLeft,
-                    topRight: AppThemeColors.inputBorder(context)
+                    topRight: context.style.inputBorder()
                         .borderRadius
                         .topRight,
                   ),
@@ -246,11 +246,11 @@ class CustomTableGenerator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = AppThemeColors(context);
+    
     final ScrollController _scrollController = ScrollController();
     final border = TableBorder.all(
-      color: theme.borderColor,
-      width: AppThemeColors.borderWidth(context) * .8,
+      color: context.color.borderColor,
+      width: context.style.borderWidth() * .8,
     );
 
     final widths = fixed
@@ -368,9 +368,9 @@ class _CResizableTableState extends State<CResizableTable> {
     var sBoder = safeOutlineBorder(context);
     BoxDecoration decoration = BoxDecoration(
       // border: Border.all( width: AppThemeColors.borderWidth(context) *.6,color: AppThemeColors(context).borderColor ),
-      color: widget.headeBgColor ?? AppThemeColors(context).hoverBg,
+      color: widget.headeBgColor ?? context.color .hoverBg,
       border: Border.all(
-          width:  .6, color: AppThemeColors.secondary(context) ),
+          width:  .6, color: context.color.secondary ),
     );
 
     return Row(
@@ -389,9 +389,9 @@ class _CResizableTableState extends State<CResizableTable> {
                 child: Text(
                   overflow: TextOverflow.ellipsis,
                   widget.headers[index],
-                  style: AppThemeColors.bodyMedium(context).copyWith(
+                  style: context.style.bodyMedium.style.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppThemeColors.primary(context)),
+                      color: context.color.primary),
                 ),
               ),
             ),
@@ -452,7 +452,7 @@ class _CResizableTableState extends State<CResizableTable> {
                   width: sBorder.borderSide.width * .6,
                   color: Theme.of(context).brightness == Brightness.dark
                       ? sBorder.borderSide.color
-                      : AppThemeColors.secondary(context)),
+                      : context.color.secondary),
             ),
             child: widget.data[rowIndex][colIndex],
           );

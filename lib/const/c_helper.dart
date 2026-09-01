@@ -105,3 +105,34 @@ TextStyle clabelStyle(BuildContext context, bool isError)   {
 
 
 
+ class Txt {
+  final TextEditingController controller = TextEditingController();
+  FocusNode? focusNode = FocusNode();
+
+  void dispose() {
+    controller.dispose();
+    focusNode?.dispose();
+    focusNode = null;
+  }
+}
+
+class Cmb {
+  String id = '';
+  FocusNode? focusNode = FocusNode();
+  void dispose() {
+    focusNode?.dispose();
+    focusNode = null;
+  }
+}
+
+class CmbTxt {
+  String id = '';
+  FocusNode? focusNode = FocusNode();
+  final TextEditingController controller = TextEditingController();
+
+  void dispose() {
+    controller.dispose();
+    focusNode?.dispose();
+    focusNode = null;
+  }
+}

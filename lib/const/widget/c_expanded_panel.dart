@@ -113,7 +113,7 @@ class _CExpandedPanelState extends State<CExpandedPanel>
           splashColor: !widget.isSplashColor
               ? Colors.transparent
               : widget.isSelectedColor
-                  ? widget.splashColor ?? AppThemeColors(context).hoverBg
+                  ? widget.splashColor ??context.color.hoverBg
                   : Colors.transparent,
           child: Container(
             decoration: _isExpanded && widget.isSelectedColor
@@ -122,13 +122,13 @@ class _CExpandedPanelState extends State<CExpandedPanel>
                         BorderRadius.circular(widget.borderRadius ?? 8),
                     color: widget.splashColor == null
                         ? widget.selectedTitleColor
-                        : AppThemeColors(context).hoverBg,
+                        : context.color.hoverBg,
                     boxShadow: [
                       BoxShadow(
                           blurRadius: 3,
                           spreadRadius: 0,
                           color: widget.selectedTitleColor ??
-                              AppThemeColors(context).borderColor)
+                             context.color.borderColor)
                     ],
                   )
                 : null,
@@ -285,7 +285,7 @@ class CTreeNode extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: expanded
                                   ? animatedColor ??
-                                      AppThemeColors(context).selectedBg
+                                      context.color.selectedBg
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -300,7 +300,7 @@ class CTreeNode extends StatelessWidget {
                       child: CHoverMaskContainer(
                         hoverColor: isSpashColor == false
                             ? Colors.transparent
-                            : AppThemeColors.primary(context).withAlpha(5),
+                            : context.color.primary.withAlpha(5),
                         child: Row(
                           children: [
                             Flexible(
@@ -308,22 +308,20 @@ class CTreeNode extends StatelessWidget {
                                 title,
                                 overflow: TextOverflow.ellipsis,
                                 style: !expanded
-                                    ? AppThemeColors.bodyMedium(context)
+                                    ?  context.style.bodyMedium.style
                                         .copyWith(
                                           color: tColor,
                                             fontWeight: FontWeight.w500,
                                             fontSize: textSize ??
-                                                AppThemeColors.fontSize(
-                                                    context))
-                                    : AppThemeColors.bodyMedium(context)
+                                                context.style.fontSize ) 
+                                    : context.style.bodyMedium.style
                                         .copyWith(
                                           color: tColor,
                                             // color: AppThemeColors.secondary(
                                             //     context),
                                             fontWeight: FontWeight.w600,
                                             fontSize: textSize ??
-                                                AppThemeColors.fontSize(
-                                                    context)),
+                                               context.style.fontSize),
                               ),
                             ),
                             contextMenu != null

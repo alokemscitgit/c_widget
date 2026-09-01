@@ -93,6 +93,9 @@ class _CTextBoxState extends State<CTextBox> {
     // Use passed focusNode or create a local fallback
     _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(_onFocusChange);
+
+ 
+
   }
 
   void _onFocusChange() {
@@ -116,6 +119,11 @@ class _CTextBoxState extends State<CTextBox> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.controller.text.isNotEmpty) {
+      setState(() {
+        widget.isError = false;
+      });
+    }
     final theme = Theme.of(context);
     final inputTheme = theme.inputDecorationTheme;
     final resolved = (inputTheme.contentPadding ??

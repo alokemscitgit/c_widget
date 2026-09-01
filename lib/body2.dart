@@ -88,7 +88,7 @@ _body2(BuildContext context, Function(bool b) fun, bool k,
                            child: Container(
                            padding: EdgeInsets.only(top: 4,bottom: 4,left: 4),
                             decoration: BoxDecoration(
-                                       color: AppThemeColors.scaffoldBackground(context),
+                                       color: context.color.scaffoldBackground,
                                        
                                      //   (Theme.of(context).brightness == Brightness.dark)
                                      // ? Colors.grey[700]!
@@ -205,11 +205,11 @@ _deawer(BuildContext context, Function(bool b) fun, bool k,
   final currentKey = Provider.of<ThemeProvider>(context).themeKey;
   return Container(
       decoration: BoxDecoration(
-          color: AppThemeColors.scaffoldBackground(context).withOpacity(0.9),
+          color: context.color.scaffoldBackground.withOpacity(0.9),
           borderRadius: BorderRadius.only(topRight: Radius.circular(8)),
           boxShadow: [
             BoxShadow(
-                color: AppThemeColors.secondary(context).withOpacity(0.99),
+                color: context.color.secondary .withOpacity(0.99),
                 spreadRadius: 0,
                 blurRadius: 2.5)
           ]),
@@ -816,8 +816,8 @@ Widget CustopPopUpItemList(String name, IconData icon) {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   color: hover
-                      ? AppThemeColors(context).hoverBg
-                      : AppThemeColors(context).normalBg,
+                      ? context.color.hoverBg
+                      : context.color.normalBg,
                   // boxShadow: [
                   //   BoxShadow(
                   //     color: hover
@@ -833,17 +833,17 @@ Widget CustopPopUpItemList(String name, IconData icon) {
                     Icon(
                       icon,
                       color: hover
-                          ? AppThemeColors(context).hoverText
-                          : AppThemeColors(context).normalText,
+                          ?context.color.hoverText
+                          : context.color.normalText,
                       size: 24,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       name,
-                      style: AppThemeColors.bodySmall(context).copyWith(
+                      style: context.style.bodySmall.style.copyWith(
                           color: hover
-                              ? AppThemeColors(context).hoverText
-                              : AppThemeColors(context).normalText),
+                              ? context.color.hoverText
+                              : context.color.normalText),
                     )
                   ],
                 ),

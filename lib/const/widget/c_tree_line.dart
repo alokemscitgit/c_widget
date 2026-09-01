@@ -37,7 +37,7 @@ class CTreeLine extends StatelessWidget {
               width: 1,
               color: isLastNode
                   ? Colors.transparent
-                  : AppThemeColors.secondary(context),
+                  : context.color.secondary,
             ),
           ),
 
@@ -51,7 +51,7 @@ class CTreeLine extends StatelessWidget {
                     child: Container(
                       width: 1,
                       height: lastLineHeight,
-                      color:  AppThemeColors.secondary(context),
+                      color: context.color.secondary,
                     ))
                 : Positioned(child: SizedBox.shrink()),
             Padding(
@@ -66,7 +66,7 @@ class CTreeLine extends StatelessWidget {
                     child: Container(
                       width: 16,
                       height: 1,
-                      color: AppThemeColors.secondary(context),
+                      color:context.color.secondary,
                     ),
                   ),
                   isAutoWidth

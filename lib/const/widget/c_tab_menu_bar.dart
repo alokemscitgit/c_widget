@@ -212,15 +212,15 @@ double calculateHeight(BuildContext context) {
   const double kVerticalPadding = 2.0;
 
   // Recalculate the text style used in the build method
-  final textStyle = AppThemeColors.bodySmall(context).copyWith(
-    fontSize: (AppThemeColors.bodySmall(context).fontSize ?? 9.5) * .75,
+  final textStyle = context.style.bodySmall.style.copyWith(
+    fontSize: (context.style.bodySmall.style.fontSize ?? 9.5) * .75,
   );
   final double textHeightEstimate =
       textStyle.fontSize! * (textStyle.height ?? 1.2);
 
   final double requiredHeight = textHeightEstimate +
       (kVerticalPadding * 2) +
-      (AppThemeColors.borderWidth(context) * 2);
+      (context.style.borderWidth()  * 2);
   return requiredHeight;
 }
 

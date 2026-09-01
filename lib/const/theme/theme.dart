@@ -115,18 +115,17 @@ ThemeData _blueTheme(double s, String? fontFamily) {
     scaffoldBackgroundColor: bg,
 
     // ----------- AppBar -----------
-    appBarTheme:   AppBarTheme(
+    appBarTheme: AppBarTheme(
       backgroundColor: panel,
       foregroundColor: Colors.white,
       elevation: 2,
       shadowColor: Colors.black26,
       centerTitle: false,
       titleTextStyle: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: Colors.white,
-        fontFamily: fontFamily
-      ),
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+          fontFamily: fontFamily),
     ),
 
     // ----------- Typography -----------
@@ -150,7 +149,7 @@ ThemeData _blueTheme(double s, String? fontFamily) {
       color: Colors.white,
       elevation: 3,
       shadowColor: Colors.black12,
-    //  margin: const EdgeInsets.all(8),
+      //  margin: const EdgeInsets.all(8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -209,15 +208,12 @@ ThemeData _darkTheme(double s, String? fontFamily) {
     iconTheme: const IconThemeData(
       color: Color.fromARGB(255, 252, 198, 118),
       size: 20,
-
-      
     ),
-     dividerTheme: DividerThemeData(
+    dividerTheme: DividerThemeData(
       color: const Color.fromARGB(255, 230, 228, 228),
       thickness: 1,
       space: 12,
     ),
-
   );
 }
 
@@ -365,8 +361,9 @@ ThemeData _royalGoldTheme(double s, String? fontFamily) {
 
 ThemeData _coolGreyTheme(double s, String? fontFamily) {
   const primary = Color(0xFF546E7A);
-  const secondary = Color(0xFF78909C);
-  const bg = Color(0xFFF4F6F7);
+  const secondary = 
+  Color(0xFF78909C);
+  const bg =Color(0xFFf8fafb);// Color(0xFFF4F6F7);
   const font = Color(0xFF263238);
   const panel = Color(0xFFE8ECEF);
 
@@ -461,19 +458,17 @@ ThemeData _tinyGreenTheme(double s, String? fontFamily) {
     scaffoldBackgroundColor: bg,
 
     // ===== AppBar ===== (FB style = white, small shadow, bold title)
-    appBarTheme:   AppBarTheme(
-    
+    appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
       elevation: 1,
       shadowColor: Colors.black12,
       foregroundColor: primary,
       centerTitle: false,
       titleTextStyle: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: primary,
-        fontFamily: fontFamily
-      ),
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: primary,
+          fontFamily: fontFamily),
     ),
 
     // ===== Text Theme =====
@@ -531,9 +526,14 @@ ThemeData _tinyGreenTheme(double s, String? fontFamily) {
 TextTheme _textTheme(Color color, double s, {String? fontFamily}) {
   double size(double base) => (base * s).clamp(11.6, 24);
   return TextTheme(
-    bodyLarge:
-        TextStyle(color: color, fontSize: size(15), fontWeight: FontWeight.w400,fontFamily: fontFamily,height: 1.45,
-        letterSpacing: 0.15,),
+    bodyLarge: TextStyle(
+      color: color,
+      fontSize: size(15),
+      fontWeight: FontWeight.w400,
+      fontFamily: fontFamily,
+      height: 1.45,
+      letterSpacing: 0.15,
+    ),
     bodyMedium: TextStyle(
         color: color,
         fontSize: size(13.5),
@@ -541,17 +541,22 @@ TextTheme _textTheme(Color color, double s, {String? fontFamily}) {
         height: 1.4,
         letterSpacing: 0.25,
         fontFamily: fontFamily),
-    bodySmall:
-        TextStyle(color: color, fontSize: size(12), fontFamily: fontFamily,fontWeight: FontWeight.w400,
-        height: 1.35,
-        letterSpacing: 0.4,),
+    bodySmall: TextStyle(
+      color: color,
+      fontSize: size(12),
+      fontFamily: fontFamily,
+      fontWeight: FontWeight.w400,
+      height: 1.35,
+      letterSpacing: 0.4,
+    ),
     titleLarge: TextStyle(
-        color: color,
-        //fontWeight: FontWeight.bold,
-        fontSize: size(20.0),
-        fontFamily: fontFamily,fontWeight: FontWeight.w600,
-        height: 1.3,
-        letterSpacing: -0.2,),
+      color: color,
+      //fontWeight: FontWeight.bold,
+      fontSize: size(20.0),
+      fontFamily: fontFamily, fontWeight: FontWeight.w600,
+      height: 1.3,
+      letterSpacing: -0.2,
+    ),
     titleMedium: TextStyle(
         color: color,
         fontWeight: FontWeight.w600,
@@ -599,8 +604,10 @@ InputDecorationTheme _inputDecoration(
     focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: focus, width: .9),
         borderRadius: BorderRadius.circular(4)),
-    border: OutlineInputBorder( borderSide: BorderSide(color: border, width: 1),
-        borderRadius: BorderRadius.circular(4), gapPadding: 0),
+    border: OutlineInputBorder(
+        borderSide: BorderSide(color: border, width: 1),
+        borderRadius: BorderRadius.circular(4),
+        gapPadding: 0),
     suffixIconConstraints: const BoxConstraints(minWidth: 28, minHeight: 20),
   );
 }
@@ -613,8 +620,7 @@ ElevatedButtonThemeData _buttonTheme(Color bg, Color fg, double s,
   double size(double v) => (v * s).clamp(10, 14);
   return ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       backgroundColor: bg,
       foregroundColor: fg,
       textStyle: TextStyle(
@@ -637,9 +643,10 @@ CardTheme _cardTheme({Color? color}) => CardTheme(
       color: color ?? Colors.white,
       elevation: 2,
       shape: RoundedRectangleBorder(),
-      margin:  EdgeInsets.only(left: 2, right: 2,bottom: 0,top: 0),
+      margin: EdgeInsets.only(left: 2, right: 2, bottom: 0, top: 0),
     );
-DatePickerThemeData _calendarTheme(Color primary, Color font, double s,String? fontfamily) {
+DatePickerThemeData _calendarTheme(
+    Color primary, Color font, double s, String? fontfamily) {
   return DatePickerThemeData(
     backgroundColor: Colors.white,
     surfaceTintColor: Colors.transparent,
@@ -651,31 +658,23 @@ DatePickerThemeData _calendarTheme(Color primary, Color font, double s,String? f
     headerBackgroundColor: primary.withOpacity(.15),
     headerForegroundColor: font,
     headerHeadlineStyle: TextStyle(
-      fontSize: 18 * s,
-      fontWeight: FontWeight.w700,
-      color: font,
-      fontFamily: fontfamily
-    ),
+        fontSize: 18 * s,
+        fontWeight: FontWeight.w700,
+        color: font,
+        fontFamily: fontfamily),
     headerHelpStyle: TextStyle(
-      fontSize: 12 * s,
-      color: font.withOpacity(.7), fontFamily: fontfamily
-      
-    ),
+        fontSize: 12 * s, color: font.withOpacity(.7), fontFamily: fontfamily),
 
     // Weekday style
     weekdayStyle: TextStyle(
-      fontSize: 12 * s,
-      color: primary.withOpacity(.8),
-      fontWeight: FontWeight.w600,
-       fontFamily: fontfamily
-    ),
+        fontSize: 12 * s,
+        color: primary.withOpacity(.8),
+        fontWeight: FontWeight.w600,
+        fontFamily: fontfamily),
 
     // Day cells
     dayStyle: TextStyle(
-      fontSize: 13 * s,
-      fontWeight: FontWeight.bold,
-       fontFamily: fontfamily
-    ),
+        fontSize: 13 * s, fontWeight: FontWeight.bold, fontFamily: fontfamily),
     dayForegroundColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(MaterialState.disabled)) return font.withOpacity(.5);
       if (states.contains(MaterialState.selected)) return Colors.white;
@@ -694,10 +693,7 @@ DatePickerThemeData _calendarTheme(Color primary, Color font, double s,String? f
 
     // Year picker
     yearStyle: TextStyle(
-      fontSize: 14 * s,
-      fontWeight: FontWeight.w600,
-       fontFamily: fontfamily
-    ),
+        fontSize: 14 * s, fontWeight: FontWeight.w600, fontFamily: fontfamily),
     yearForegroundColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(MaterialState.selected)) return Colors.white;
       return font;
@@ -708,7 +704,6 @@ DatePickerThemeData _calendarTheme(Color primary, Color font, double s,String? f
     }),
   );
 }
-
 
 class ThemeProvider with ChangeNotifier {
   static const _themeKeyPref = 'theme_key';
@@ -742,7 +737,6 @@ class ThemeProvider with ChangeNotifier {
     prefs.setInt(_themeKeyPref, key.index);
   }
 
-   
   Future<void> setFontFamily(String font) async {
     if (font == _fontFamily) return;
     _fontFamily = font;
@@ -752,5 +746,3 @@ class ThemeProvider with ChangeNotifier {
     prefs.setString(_fontFamilyPref, font);
   }
 }
-
- 

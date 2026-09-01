@@ -33,19 +33,19 @@ class _CTabButtonState extends State<CTabButton> {
 
   @override
   Widget build(BuildContext context) {
-    AppThemeColors theme = AppThemeColors(context);
-    final enabledBorderColor = theme.borderColor;
+  //  AppThemeColors theme = AppThemeColors(context);
+    final enabledBorderColor = context.color.borderColor ;
 
     final Color hoverBg = (Theme.of(context).brightness == Brightness.dark)
         ? Colors.grey[700]!
         : Colors.white;
     final Color selectedBg =
         Theme.of(context).colorScheme.surfaceVariant.withOpacity(.05);
-    final Color normalBg = theme.normalBg;
-    final Color hoverText = theme.normalText;
-    final Color normalText = theme.hoverText;
-    final Color crossNormal = theme.crossNormal;
-    final Color crossHover = theme.crossHover;
+    final Color normalBg = context.color.normalBg;
+    final Color hoverText = context.color.normalText;
+    final Color normalText = context.color.hoverText;
+    final Color crossNormal = context.color.crossNormal;
+    final Color crossHover = context.color.crossHover;
 
     // ------------------- USE ClipRRect TO AVOID BORDER ERROR -------------------
     return MouseRegion(
@@ -70,20 +70,20 @@ class _CTabButtonState extends State<CTabButton> {
           border: widget.isSelected
               ? Border(
                   top: BorderSide(
-                    width: AppThemeColors.borderWidth(context) * .7,
+                    width:  context.style.borderWidth() * .7,
                     color: enabledBorderColor,
                   ),
                   left: BorderSide(
-                    width: AppThemeColors.borderWidth(context) * .7,
+                    width: context.style.borderWidth() * .7,
                     color: enabledBorderColor,
                   ),
                   right: BorderSide(
-                    width: AppThemeColors.borderWidth(context) * .7,
+                    width: context.style.borderWidth()  * .7,
                     color: enabledBorderColor,
                   ),
                 )
               : Border.all(
-                  width: AppThemeColors.borderWidth(context) * .7,
+                  width: context.style.borderWidth()  * .7,
                   color: enabledBorderColor,
                 ),
           boxShadow: isHover && !widget.isSelected
@@ -112,10 +112,10 @@ class _CTabButtonState extends State<CTabButton> {
                 onTap: widget.buttonClick,
                 child: Text(
                   widget.text,
-                  style: AppThemeColors.bodySmall(context).copyWith(
+                  style: context.style.bodySmall.style .copyWith(
                     fontStyle: FontStyle.italic,
                     fontSize:
-                        (AppThemeColors.bodySmall(context).fontSize ?? 9.5) *
+                        (context.style.bodySmall.style.fontSize ?? 9.5) *
                             .9,
                     fontWeight: isHover || widget.isSelected
                         ? FontWeight.w600
@@ -145,7 +145,7 @@ class _CTabButtonState extends State<CTabButton> {
                         ),
                         child: Icon(
                           Icons.close_outlined,
-                          size: (AppThemeColors.bodyLarge(context).fontSize ??
+                          size: (context.style.bodyLarge.style .fontSize ??
                                   12) *
                               .9,
                           color: isCrossHover || widget.isSelected

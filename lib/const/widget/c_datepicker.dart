@@ -112,6 +112,14 @@ class _CDatePickerState extends State<CDatePicker> {
 
   @override
   Widget build(BuildContext context) {
+
+if (widget.controller.text.isNotEmpty) {
+      setState(() {
+        widget.isError = false;
+      });
+    }
+
+
     final theme = Theme.of(context);
     final inputTheme = theme.inputDecorationTheme;
 

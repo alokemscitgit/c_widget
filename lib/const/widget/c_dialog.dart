@@ -129,7 +129,7 @@ Future<void> CDialog(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         // borderRadius: BorderRadius.only(topRight: Radius.circular(50),bottomRight: Radius.circular(50)),
-                        color: AppThemeColors.secondary(context).withOpacity(0.5),
+                        color: context.color.secondary.withOpacity(0.5),
                         // border: Border.all(color:safeOutlineBorder(context).borderSide.color )
                         boxShadow: [
                           BoxShadow(
@@ -145,7 +145,7 @@ Future<void> CDialog(
                       child: CHoverIcon(
                           icon: Icons.close,
                           size: 20,
-                          iconColor: AppThemeColors(context).normalText,
+                          iconColor: context.color.normalText,
                           iconHoverColor: theme.colorScheme.error,
                           hoverSize: 20),
                     ),

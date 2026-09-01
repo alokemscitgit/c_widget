@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+
 class CSplitView extends StatefulWidget {
   final Widget first;
   final Widget second;
@@ -10,19 +11,20 @@ class CSplitView extends StatefulWidget {
   final double? minFirstPanelSize;
   final double? maxFirstPanelSize;
   final bool isShowLeftPanel;
+  final bool isShowSplitButton;
 
-  const CSplitView({
-    super.key,
-    required this.first,
-    required this.second,
-    this.axis = Axis.horizontal,
-    this.initialFraction = 0.3,
-    this.dividerThickness = 4.0,
-    this.dividerColor = const Color(0xFFCCCCCC),
-    this.minFirstPanelSize,
-    this.maxFirstPanelSize,
-    this.isShowLeftPanel = true,
-  });
+  const CSplitView(
+      {super.key,
+      required this.first,
+      required this.second,
+      this.axis = Axis.horizontal,
+      this.initialFraction = 0.3,
+      this.dividerThickness = 4.0,
+      this.dividerColor = const Color(0xFFCCCCCC),
+      this.minFirstPanelSize,
+      this.maxFirstPanelSize,
+      this.isShowLeftPanel = true,
+      this.isShowSplitButton = true});
 
   @override
   State<CSplitView> createState() => _CSplitViewState();
@@ -32,7 +34,6 @@ class _CSplitViewState extends State<CSplitView> {
   double? fixedFirstSize; // Locked size after drag
   double currentFirstSize = 0;
   bool isMenu = false;
-   
 
   @override
   Widget build(BuildContext context) {
@@ -99,17 +100,87 @@ class _CSplitViewState extends State<CSplitView> {
                   onVerticalDragUpdate: widget.axis == Axis.vertical
                       ? (d) => _updateDrag(d.delta.dy)
                       : null,
-                  child: Container(
-                    width: widget.axis == Axis.horizontal
-                        ? divider
-                        : double.infinity,
-                    height: widget.axis == Axis.vertical
-                        ? divider
-                        : double.infinity,
-                    color: widget.dividerColor,
-                  ),
+                  child: !widget.isShowSplitButton
+                      ? Container(
+                          width: widget.axis == Axis.horizontal
+                              ? divider
+                              : double.infinity,
+                          height: widget.axis == Axis.vertical
+                              ? divider
+                              : double.infinity,
+                          color: widget.dividerColor,
+                        )
+                      : Container(
+                          width: widget.axis == Axis.horizontal
+                              ? divider
+                              : double.infinity,
+                          height: widget.axis == Axis.vertical
+                              ? divider
+                              : double.infinity,
+                          color: widget.dividerColor,
+                          alignment: Alignment.center,
+                          child: Container(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 0.5),
+                            width: 3,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(2),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 3,
+                                  spreadRadius: 0,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.2),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: List.generate(
+                                5,
+                                (_) => Container(
+                                  width: 2,
+                                  height: 2,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    borderRadius: BorderRadius.circular(1),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                 ),
               ),
+            // MouseRegion(
+            //   cursor: cursor,
+            //   child: GestureDetector(
+            //     behavior: HitTestBehavior.translucent,
+            //     onHorizontalDragUpdate: widget.axis == Axis.horizontal
+            //         ? (d) => _updateDrag(d.delta.dx)
+            //         : null,
+            //     onVerticalDragUpdate: widget.axis == Axis.vertical
+            //         ? (d) => _updateDrag(d.delta.dy)
+            //         : null,
+            //     child: Container(
+            //       width: widget.axis == Axis.horizontal
+            //           ? divider
+            //           : double.infinity,
+            //       height: widget.axis == Axis.vertical
+            //           ? divider
+            //           : double.infinity,
+            //       color: widget.dividerColor,
+            //     ),
+            //   ),
+            // ),
 
             // RIGHT PANEL
             Expanded(child: widget.second),

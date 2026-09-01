@@ -80,7 +80,6 @@ class _CCheckboxState extends State<CCheckbox> {
     );
   }
 }
-
 class CCheckbox2 extends StatelessWidget {
   final String label;
   final bool value;
@@ -95,99 +94,97 @@ class CCheckbox2 extends StatelessWidget {
   final bool isTruncate;
   final Color? checkTickColor;
 
-  const CCheckbox2(
-      {super.key,
-      required this.label,
-      required this.value,
-      this.onChanged,
-      this.isLabelColorChange = true,
-      this.isAnim = true,
-      this.isShoCheck = true,
-      this.animColor,
-      this.animTextColor,
-      this.textFontSize,
-      this.textFontWeight,
-      this.isTruncate = false,
-      this.checkTickColor});
+  const CCheckbox2({
+    super.key,
+    required this.label,
+    required this.value,
+    this.onChanged,
+    this.isLabelColorChange = true,
+    this.isAnim = true,
+    this.isShoCheck = true,
+    this.animColor,
+    this.animTextColor,
+    this.textFontSize,
+    this.textFontWeight,
+    this.isTruncate = false,
+    this.checkTickColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final fontSize =
-        textFontSize ?? Theme.of(context).textTheme.bodySmall?.fontSize ?? 9;
+    final theme = Theme.of(context);
+    final bodySmall = theme.textTheme.bodySmall;
+    final isDark = theme.brightness == Brightness.dark;
 
+    final fontSize = textFontSize ?? bodySmall?.fontSize ?? 9;
     final scale = (fontSize / 16).clamp(0.6, 1.0);
 
-    Widget textWidget = label.isEmpty
-        ? SizedBox.shrink()
-        : InkWell(
-            onTap: () => onChanged?.call(!value),
-            splashColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            child: Text(
-              label,
-              maxLines: isTruncate ? 1 : null,
-              overflow:
-                  isTruncate ? TextOverflow.ellipsis : TextOverflow.visible,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontSize: fontSize * .91,
-                    fontWeight: value
-                        ? FontWeight.bold
-                        : (textFontWeight ?? FontWeight.w600),
-                    color: (value && isLabelColorChange)
-                        ? animTextColor ??
-                            Theme.of(context).colorScheme.secondary
-                        : Theme.of(context).textTheme.bodySmall?.color,
-                  ),
-            ),
-          );
+    final primaryColor = theme.colorScheme.primary;
+    final selectTextColor = Color.lerp(
+      primaryColor,
+      isDark ? Colors.white : Colors.black,
+      0.2,
+    )!;
+
+    Widget textWidget = GestureDetector(
+      onTap: () => onChanged?.call(!value),
+      behavior: HitTestBehavior.opaque,
+      child: Text(
+        label,
+        maxLines: isTruncate ? 1 : null,
+        overflow: isTruncate ? TextOverflow.ellipsis : TextOverflow.visible,
+        style: bodySmall?.copyWith(
+          fontSize: fontSize * 0.91,
+          fontWeight: value ? FontWeight.bold : (textFontWeight ?? FontWeight.w600),
+          color: (value && isLabelColorChange)
+              ? (animTextColor ?? selectTextColor)
+              : bodySmall.color,
+        ),
+      ),
+    );
+
+    if (isTruncate) {
+      textWidget = Expanded(child: textWidget);
+    }
 
     return Stack(
       children: [
-        Positioned.fill(
-          child: !isAnim
-              ? const SizedBox()
-              : AnimatedSlide(
-                  duration: const Duration(milliseconds: 350),
-                  curve: Curves.easeOutCubic,
-                  offset: value ? const Offset(0, 0) : const Offset(-1, 0),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 350),
-                    curve: Curves.easeOutCubic,
-                    decoration: BoxDecoration(
-                      color: value
-                          ? (animColor ?? AppThemeColors(context).selectedBg)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
+        if (isAnim)
+          Positioned.fill(
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeOutCubic,
+              offset: value ? Offset.zero : const Offset(-1, 0),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.easeOutCubic,
+                decoration: BoxDecoration(
+                  color: value
+                      ? (animColor ?? primaryColor.withValues(alpha: 0.18))
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(6),
                 ),
-        ),
+              ),
+            ),
+          ),
         Padding(
-          padding: EdgeInsets.only(right: 6, left: !isShoCheck ? 6 : 0),
+          padding: EdgeInsets.only(right: 6, left: isShoCheck ? 0 : 6),
           child: Row(
             mainAxisSize: isTruncate ? MainAxisSize.max : MainAxisSize.min,
             children: [
               Transform.scale(
                 scale: scale,
-                child: !isShoCheck
-                    ? const SizedBox(height: 18)
-                    : Checkbox(
+                child: isShoCheck
+                    ? Checkbox(
                         value: value,
                         onChanged: (v) => onChanged?.call(v ?? false),
-                        activeColor: Theme.of(context).colorScheme.secondary,
-                        checkColor: checkTickColor ??
-                            Theme.of(context).colorScheme.onPrimary,
-                        visualDensity: const VisualDensity(
-                          horizontal: -4,
-                          vertical: -4,
-                        ),
-                      ),
+                        activeColor: theme.colorScheme.secondary,
+                        checkColor: checkTickColor ?? theme.colorScheme.onPrimary,
+                        visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                      )
+                    : const SizedBox(height: 18),
               ),
-              if (isTruncate)
-                label.isEmpty ? SizedBox.shrink() : Expanded(child: textWidget)
-              else
-                label.isEmpty ? SizedBox.shrink() : textWidget,
+              if (label.isNotEmpty) textWidget,
             ],
           ),
         ),
@@ -213,7 +210,6 @@ class CCheckBox3 extends StatelessWidget {
         horizontal: -4,
         vertical: -4,
       ),
-       
     );
   }
 }
