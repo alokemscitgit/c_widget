@@ -299,7 +299,7 @@ class CTreeNode extends StatelessWidget {
                     Flexible(
                       child: CHoverMaskContainer(
                         hoverColor: isSpashColor == false
-                            ? Colors.transparent
+                            ? null
                             : context.color.primary.withAlpha(5),
                         child: Row(
                           children: [
