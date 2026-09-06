@@ -10,6 +10,7 @@ class CSearchOverlay extends StatefulWidget {
   final void Function()? onEditingComplete;
   final void Function(String)? onChange;
   final bool isHover;
+  final String label;
   const CSearchOverlay(
       {super.key,
       required this.controller,
@@ -21,7 +22,7 @@ class CSearchOverlay extends StatefulWidget {
       this.onEditingComplete,
       this.onSubmitted,
       this.onChange,
-      this.isHover = true});
+      this.isHover = true,this.label=''});
 
   @override
   State<CSearchOverlay> createState() => _CSearchOverlayState();
@@ -101,6 +102,7 @@ class _CSearchOverlayState extends State<CSearchOverlay>
                   elevation: 8,
                   borderRadius: BorderRadius.circular(50),
                   child: CTextBox(
+                    label:  widget.label,
                     controller: widget.controller,
                     focusNode: _focusNode,
                     width: widget.width,
@@ -147,10 +149,9 @@ class _CSearchOverlayState extends State<CSearchOverlay>
               onPressed: _toggleOverlay,
             )
           : IconButton(
-visualDensity: VisualDensity.standard,
-               padding: EdgeInsets.all(4),
-              
-constraints: const BoxConstraints(
+              visualDensity: VisualDensity.standard,
+              padding: EdgeInsets.all(4),
+              constraints: const BoxConstraints(
                 maxHeight: 28, // Set custom width
                 maxWidth: 28, // Set custom height
               ),

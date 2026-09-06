@@ -526,6 +526,7 @@ class COverlayBuilder extends StatefulWidget {
   final bool isNotDispose;
   final Color? bgColor;
   final double maxHeight;
+  final VoidCallback? onTap;
 
   const COverlayBuilder({
     super.key,
@@ -538,7 +539,7 @@ class COverlayBuilder extends StatefulWidget {
     this.isCloseOutsideClick = true,
     this.isNotDispose = false,
     this.bgColor,
-    this.maxHeight = 350.0,
+    this.maxHeight = 350.0,this.onTap,
   });
 
   @override
@@ -549,6 +550,10 @@ class _COverlayBuilderState extends State<COverlayBuilder>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   final FocusNode _focusNode = FocusNode();
   final LayerLink _layerLink = LayerLink();
+  
+  // Create a persistent focus scope node instance
+  late final FocusScopeNode _focusScopeNode; 
+  
   OverlayEntry? _overlayEntry;
   bool _isOpen = false;
   bool _openUpwards = false;
@@ -562,6 +567,7 @@ class _COverlayBuilderState extends State<COverlayBuilder>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
+    _focusScopeNode = FocusScopeNode(); // Initialize it once
     _effectiveController = widget.controller ?? COverlayBuilderController();
     _effectiveController._attach(this);
 
@@ -580,7 +586,6 @@ class _COverlayBuilderState extends State<COverlayBuilder>
 
   @override
   void didChangeMetrics() {
-    // Triggers when window is resized or rotated
     if (_isOpen) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _overlayEntry?.markNeedsBuild();
@@ -607,6 +612,7 @@ class _COverlayBuilderState extends State<COverlayBuilder>
     if (_isOpen) {
       await close();
     } else {
+      widget.onTap?.call(); // Initialize data safely here (outside build phase)
       _overlayEntry = _createOverlayEntry();
       Overlay.of(context).insert(_overlayEntry!);
       if (mounted) setState(() => _isOpen = true);
@@ -618,7 +624,6 @@ class _COverlayBuilderState extends State<COverlayBuilder>
   OverlayEntry _createOverlayEntry() {
     return OverlayEntry(
       builder: (context) {
-        // Dynamic re-calculation inside builder during rebuilds
         final mediaQuery = MediaQuery.of(context);
         final screenSize = mediaQuery.size;
         final padding = mediaQuery.padding;
@@ -672,6 +677,7 @@ class _COverlayBuilderState extends State<COverlayBuilder>
     _overlayEntry = null;
 
     _focusNode.dispose();
+    _focusScopeNode.dispose(); // Clean up focus scope node
     if (!widget.isNotDispose) {
       _animationController.dispose();
     }
@@ -709,18 +715,21 @@ class _COverlayBuilderState extends State<COverlayBuilder>
           onTapOutside: (_) {
             if (_isOpen && widget.isCloseOutsideClick) close();
           },
-          child: Material(
-            color: bgColor ?? Theme.of(context).cardColor,
-            elevation: 8,
-            borderRadius: BorderRadius.circular(widget.borderRadious),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: maxAllowedHeight,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(widget.borderRadious),
-                child: SingleChildScrollView(
-                  child: widget.builder(context, _effectiveController),
+          child: FocusScope(
+            node: _focusScopeNode, // Use the persistent node here
+            child: Material(
+              color: bgColor ?? Theme.of(context).cardColor,
+              elevation: 8,
+              borderRadius: BorderRadius.circular(widget.borderRadious),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: maxAllowedHeight,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(widget.borderRadious),
+                  child: SingleChildScrollView(
+                    child: widget.builder(context, _effectiveController),
+                  ),
                 ),
               ),
             ),
