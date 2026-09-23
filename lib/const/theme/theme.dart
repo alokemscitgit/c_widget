@@ -1,0 +1,905 @@
+ 
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class _Par {
+  final AppThemeKeys key;
+  final String name;
+  const _Par({required this.key, required this.name});
+}
+
+enum AppThemeKeys {
+  defaulttheme,
+  lightGreen,
+  blue,
+  dark,
+  purple,
+  orange,
+  mintGlass,
+  royalGold,
+  coolGrey,
+  sunsetRed,
+  tinyhtGreen;
+
+  // Helper getter to get your parameter object
+  _Par get param {
+    return switch (this) {
+      AppThemeKeys.defaulttheme => _Par(key: this, name: 'Default'),
+      AppThemeKeys.lightGreen => _Par(key: this, name: 'Light Green'),
+      AppThemeKeys.blue => _Par(key: this, name: 'Blue'),
+      AppThemeKeys.dark => _Par(key: this, name: 'Dark'),
+      AppThemeKeys.purple => _Par(key: this, name: 'Purple'),
+      AppThemeKeys.orange => _Par(key: this, name: 'Orange'),
+      AppThemeKeys.mintGlass => _Par(key: this, name: 'Mint Glass'),
+      AppThemeKeys.royalGold => _Par(key: this, name: 'Royal Gold'),
+      AppThemeKeys.coolGrey => _Par(key: this, name: 'Cool Grey'),
+      AppThemeKeys.sunsetRed => _Par(key: this, name: 'Sunset Red'),
+      AppThemeKeys.tinyhtGreen => _Par(key: this, name: 'Tiny Green'),
+    };
+  }
+}
+
+ThemeData generateThemeData(
+  AppThemeKeys key,
+  BuildContext context, {
+  String? fontFamily, // NEW: dynamic font
+}) {
+  final size = MediaQuery.of(context).size;
+  final deviceType = _getDeviceType(size.width);
+
+  // Define dynamic font scale by device type
+  final scale = switch (deviceType) {
+    DeviceType.mobile => 0.94,
+    DeviceType.tablet => .98,
+    DeviceType.desktop => 1.0,
+  };
+
+  switch (key) {
+    case AppThemeKeys.lightGreen:
+      return _lightGreenTheme(scale, fontFamily);
+    case AppThemeKeys.blue:
+      return _blueTheme(scale, fontFamily);
+    case AppThemeKeys.dark:
+      return _darkTheme(scale, fontFamily);
+    case AppThemeKeys.purple:
+      return _purpleTheme(scale, fontFamily);
+    case AppThemeKeys.orange:
+      return _orangeTheme(scale, fontFamily);
+    case AppThemeKeys.mintGlass:
+      return _mintGlassTheme(scale, fontFamily);
+    case AppThemeKeys.royalGold:
+      return _royalGoldTheme(scale, fontFamily);
+    case AppThemeKeys.coolGrey:
+      return _coolGreyTheme(scale, fontFamily);
+    case AppThemeKeys.sunsetRed:
+      return _sunsetRedTheme(scale, fontFamily);
+    case AppThemeKeys.tinyhtGreen:
+      return _tinyGreenTheme(scale, fontFamily);
+    case AppThemeKeys.defaulttheme:
+      return _defaultTheme(scale, fontFamily);
+  }
+}
+
+enum DeviceType { mobile, tablet, desktop }
+
+DeviceType _getDeviceType(double width) {
+  if (width < 700) return DeviceType.mobile;
+  if (width < 1150) return DeviceType.tablet;
+  return DeviceType.desktop;
+}
+ThemeData _defaultTheme(double s, String? fontFamily) {
+  // Latest LinkedIn Brand & UI Palette (Refreshed Tokens)
+  const primary = Color(0xFF0A66C2);     // LinkedIn Blue
+  const secondary = Color(0xFF004182);   // Active / Darker Blue
+  const bg = Color(0xFFF3F2EF);          // LinkedIn Canvas Scaffolding (Warm Grey)
+  const panel = Color(0xFFFFFFFF);       // Pure White Cards & Navigation
+  const borderLight = Color(0xFFE0DFDC); // Modern LinkedIn subtle divider/border
+  const textPrimary = Color(0xFF191919); // High-contrast near-black text
+
+  return ThemeData(
+    useMaterial3: true,
+
+    // ===== Color Scheme (Updated for modern Material 3 compatibility) =====
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primary,
+      primary: primary,
+      secondary: secondary,
+      brightness: Brightness.light,
+    ).copyWith(
+      surface: panel,
+      onSurface: textPrimary,
+    ),
+
+    scaffoldBackgroundColor: bg,
+
+    // ===== AppBar (Modern LinkedIn Top Nav Style) =====
+    appBarTheme: AppBarTheme(
+      backgroundColor: panel,
+      elevation: 0,
+      scrolledUnderElevation: 1.5,
+      shadowColor: Colors.black12,
+      foregroundColor: textPrimary,
+      centerTitle: false,
+      titleTextStyle: TextStyle(
+        fontSize: 16 * s,
+        fontWeight: FontWeight.w600,
+        color: textPrimary,
+        fontFamily: fontFamily,
+      ),
+    ),
+
+    // ===== Text Theme =====
+    textTheme: _textTheme(textPrimary, s, fontFamily: fontFamily),
+
+    // ===== Inputs (LinkedIn Search & Messaging Input Style) =====
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: const Color(0xFFEEF3F8), // LinkedIn search/input tint
+      contentPadding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 8 * s),
+      labelStyle: TextStyle(
+        color: Colors.grey.shade700,
+        fontSize: 12 * s,
+        fontFamily: fontFamily,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(8), // Modern slightly softer radius
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: primary, width: 1.5),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      border: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+
+    // ===== Buttons (LinkedIn Action Pill Style) =====
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        textStyle: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: (14 * s).clamp(11, 15),
+          fontFamily: fontFamily,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 8 * s),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20), // Sleeker pill radius
+        ),
+      ),
+    ),
+
+    // ===== Cards (LinkedIn Feed Card Look) =====
+    cardTheme: CardThemeData(
+      color: panel,
+      elevation: 0, // Flat cards separated by background gaps and thin borders
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10), // Modern softer card corners
+        side: const BorderSide(color: borderLight, width: 1),
+      ),
+      margin: EdgeInsets.symmetric(vertical: 6 * s, horizontal: 8 * s),
+    ),
+
+    // ===== Scrollbars =====
+    scrollbarTheme: _scrollbarTheme(secondary),
+
+    // ===== Icons =====
+    iconTheme: const IconThemeData(
+      color: Color(0xFF666666),
+      size: 22,
+    ),
+
+    // ===== Dividers =====
+    dividerTheme: DividerThemeData(
+      color: borderLight,
+      thickness: 1,
+      space: 12,
+    ),
+
+    // ===== Chip Theme (LinkedIn Profile Badges & Filter Pills) =====
+    chipTheme: ChipThemeData(
+      backgroundColor: Colors.white,
+      selectedColor: const Color(0xFFCCE0F5),
+      labelStyle: TextStyle(
+        fontFamily: fontFamily,
+        color: const Color(0xFF333333),
+        fontWeight: FontWeight.w600,
+        fontSize: 12 * s,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFF707070), width: 0.8),
+      ),
+    ),
+  );
+}
+
+ThemeData _lightGreenTheme(double s, String? fontFamily) {
+  const primary = Color(0xFF4CAF50);
+  const secondary = Color.fromARGB(255, 122, 170, 67);
+  const bg = Color(0xFFF8F8F8);
+  const font = Color.fromARGB(255, 0, 37, 2);
+  const panel = Color(0xFFE6F5E9);
+
+  return ThemeData(
+    useMaterial3: true,
+    fontFamily: fontFamily,
+    colorScheme: ColorScheme.fromSeed(
+        seedColor: primary, secondary: secondary, brightness: Brightness.light),
+    scaffoldBackgroundColor: bg,
+    appBarTheme:
+        const AppBarTheme(backgroundColor: panel, foregroundColor: font),
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+    inputDecorationTheme: _inputDecoration(
+        font, primary, Colors.grey.shade400, s,
+        fill: Colors.white, fontFamily: fontFamily),
+    elevatedButtonTheme:
+        _buttonTheme(primary, Colors.white, s, fontFamily: fontFamily),
+    cardTheme: _cardTheme(),
+    scrollbarTheme: _scrollbarTheme(secondary),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 56, 105, 0),
+      size: 20,
+    ),
+    //datePickerTheme: _calendarTheme(primary,font,s)
+  );
+}
+
+ThemeData _blueTheme(double s, String? fontFamily) {
+  // Premium blue palette (refined)
+  const primary = Color(0xFF1E88E5); // Slightly deeper & modern blue
+  const secondary = Color(0xFF64B5F6); // Softer accent blue
+  const bg = Color(0xFFF4F7FA); // Cleaner light background
+  const font = Color(0xFF1C2A38); // Deep readable text
+  const panel = Color(0xFF1976D2); // AppBar blue (clean, strong)
+
+  return ThemeData(
+    useMaterial3: true,
+    fontFamily: fontFamily,
+    // ----------- ColorScheme -----------
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primary,
+      primary: primary,
+      secondary: secondary,
+      background: bg,
+      brightness: Brightness.light,
+    ),
+
+    scaffoldBackgroundColor: bg,
+
+    // ----------- AppBar -----------
+    appBarTheme: AppBarTheme(
+      backgroundColor: panel,
+      foregroundColor: Colors.white,
+      elevation: 2,
+      shadowColor: Colors.black26,
+      centerTitle: false,
+      titleTextStyle: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+          fontFamily: fontFamily),
+    ),
+
+    // ----------- Typography -----------
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+
+    // ----------- Inputs -----------
+    inputDecorationTheme: _inputDecoration(
+        font,
+        primary,
+        const Color(0xFFB0BEC5), // soft bluish-grey border
+        s,
+        fill: Colors.white,
+        fontFamily: fontFamily),
+
+    // ----------- Buttons -----------
+    elevatedButtonTheme:
+        _buttonTheme(primary, Colors.white, s, fontFamily: fontFamily),
+
+    // ----------- Cards -----------
+    cardTheme: _cardTheme().copyWith(
+      color: Colors.white,
+      elevation: 3,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+
+    // ----------- Scrollbars -----------
+    scrollbarTheme: _scrollbarTheme(secondary),
+
+    // ----------- Divider -----------
+    dividerTheme: DividerThemeData(
+      color: Colors.grey.shade300,
+      thickness: 1,
+      space: 20,
+    ),
+
+    // ----------- Icons -----------
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 0, 109, 204),
+      size: 20,
+    ),
+
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: primary,
+      foregroundColor: Colors.white,
+      elevation: 4,
+    ),
+  );
+}
+
+ThemeData _darkTheme(double s, String? fontFamily) {
+  const accent = Color(0xFFFFA726);
+  const secondary = Color.fromARGB(255, 255, 191, 95);
+  const font = Color(0xFFF5F5F5);
+  const panel = Color(0xFF1A1A1A);
+  const group = Color(0xFF3D3D3D);
+
+  return ThemeData.dark(useMaterial3: true).copyWith(
+    colorScheme: ColorScheme.fromSeed(
+        primary: accent,
+        seedColor: accent,
+        secondary: secondary,
+        brightness: Brightness.dark,
+        error: Colors.redAccent),
+    scaffoldBackgroundColor: const Color(0xFF2C2C2C),
+    appBarTheme:
+        const AppBarTheme(backgroundColor: panel, foregroundColor: font),
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+    inputDecorationTheme: _inputDecoration(
+        font, accent, Colors.grey.shade600, s,
+        fill: group, fontFamily: fontFamily),
+    elevatedButtonTheme:
+        _buttonTheme(accent, Colors.black, s, fontFamily: fontFamily),
+    cardTheme: _cardTheme(color: group),
+    // datePickerTheme: _calendarTheme(accent,font,s)
+    scrollbarTheme: _scrollbarTheme(secondary),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 252, 198, 118),
+      size: 20,
+    ),
+    dividerTheme: DividerThemeData(
+      color: const Color.fromARGB(255, 230, 228, 228),
+      thickness: 1,
+      space: 12,
+    ),
+  );
+}
+
+ScrollbarThemeData _scrollbarTheme(Color secondery) => ScrollbarThemeData(
+      thumbVisibility: WidgetStateProperty.all(true),
+      trackVisibility: WidgetStateProperty.all(true),
+      thickness: WidgetStateProperty.all(6),
+      radius: const Radius.circular(8),
+
+      // Auto uses theme colors
+      thumbColor: WidgetStateProperty.all(secondery),
+      trackColor: WidgetStateProperty.all(secondery.withOpacity(.1)),
+    );
+
+ThemeData _purpleTheme(double s, String? fontFamily) {
+  const primary = Color(0xFF9B59B6);
+  const secondary = Color.fromARGB(255, 237, 132, 255);
+  const bg = Color(0xFFF3E5F5);
+  const font = Color(0xFF2E004F);
+  const panel = Color(0xFFDCC6E0);
+
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(seedColor: primary, secondary: secondary),
+    scaffoldBackgroundColor: bg,
+    appBarTheme:
+        const AppBarTheme(backgroundColor: panel, foregroundColor: font),
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+    inputDecorationTheme: _inputDecoration(
+        font, primary, Colors.grey.shade400, s,
+        fontFamily: fontFamily),
+    elevatedButtonTheme:
+        _buttonTheme(primary, Colors.white, s, fontFamily: fontFamily),
+    cardTheme: _cardTheme(),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 129, 1, 180),
+      size: 20,
+    ),
+    //datePickerTheme: _calendarTheme(primary,font,s)
+  );
+}
+
+ThemeData _orangeTheme(double s, String? fontFamily) {
+  const primary = Color(0xFFFF7043);
+  const secondary = Color(0xFFFFA726);
+  const bg = Color(0xFFFFF3E0);
+  const font = Color(0xFF4E342E);
+  const panel = Color(0xFFFFCCBC);
+
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+        seedColor: primary, secondary: const Color.fromARGB(255, 206, 138, 35)),
+    scaffoldBackgroundColor: bg,
+    appBarTheme:
+        const AppBarTheme(backgroundColor: panel, foregroundColor: font),
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+    inputDecorationTheme: _inputDecoration(
+        font, primary, Colors.grey.shade400, s,
+        fontFamily: fontFamily),
+    elevatedButtonTheme:
+        _buttonTheme(primary, Colors.white, s, fontFamily: fontFamily),
+    cardTheme: _cardTheme(),
+    scrollbarTheme: _scrollbarTheme(secondary),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 206, 49, 1),
+      size: 20,
+    ),
+    //   datePickerTheme: _calendarTheme(primary,font,s)
+  );
+}
+
+ThemeData _mintGlassTheme(double s, String? fontFamily) {
+  const primary = Color(0xFF00C4B4); // mint/cyan
+  const secondary = Color.fromARGB(255, 72, 122, 118); // lighter mint
+  const bg = Color(0xFFEFFAF9); // very light mint for scaffold
+  const font = Color(0xFF003D39); // dark teal for readability
+  const panel = Color(0xCCFFFFFF);
+
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(seedColor: primary, secondary: secondary),
+    scaffoldBackgroundColor: bg,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: panel,
+      foregroundColor: font,
+      elevation: 0,
+    ),
+    cardTheme: CardThemeData(
+      color: Colors.white.withValues(alpha: 0.6),
+      elevation: 6,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+    ),
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+    inputDecorationTheme: _inputDecoration(
+      font,
+      primary,
+      Colors.teal.shade200,
+      s,
+      fontFamily: fontFamily,
+      fill: Colors.white.withOpacity(0.7),
+    ),
+    elevatedButtonTheme:
+        _buttonTheme(primary, Colors.white, s, fontFamily: fontFamily),
+    scrollbarTheme: _scrollbarTheme(secondary),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 0, 119, 109),
+      size: 20,
+    ),
+    // datePickerTheme: _calendarTheme(primary,font,s)
+  );
+}
+
+ThemeData _royalGoldTheme(double s, String? fontFamily) {
+  const primary = Color(0xFFD4AF37);
+  const secondary = Color.fromARGB(255, 155, 139, 89);
+  const bg = Color(0xFFFDFCF7);
+  const font = Color(0xFF3A2F0B);
+  const panel = Color(0xFFE8D9A8);
+
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(seedColor: primary, secondary: secondary),
+    scaffoldBackgroundColor: bg,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: panel,
+      foregroundColor: font,
+    ),
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+    inputDecorationTheme: _inputDecoration(
+        font, primary, Colors.brown.shade300, s,
+        fontFamily: fontFamily),
+    elevatedButtonTheme: _buttonTheme(Color(0xFFB8962D), Colors.white, s,
+        fontFamily: fontFamily),
+    cardTheme: _cardTheme(color: Colors.white),
+    scrollbarTheme: _scrollbarTheme(secondary),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 153, 117, 0),
+      size: 20,
+    ),
+    // datePickerTheme: _calendarTheme(primary,font,s)
+  );
+}
+
+ThemeData _coolGreyTheme(double s, String? fontFamily) {
+  const primary = Color(0xFF546E7A);
+  const secondary = Color(0xFF78909C);
+  const bg = Color(0xFFf8fafb); // Color(0xFFF4F6F7);
+  const font = Color(0xFF263238);
+  const panel = Color(0xFFE8ECEF);
+
+  return ThemeData(
+    useMaterial3: true,
+    // dropdownMenuTheme: _dropdownMenuTheme(),
+
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primary,
+      secondary: secondary,
+    ),
+    scaffoldBackgroundColor: bg,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: panel,
+      foregroundColor: font,
+    ),
+    cardTheme: CardThemeData(
+      color: Colors.white,
+      elevation: 1,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+    inputDecorationTheme: _inputDecoration(
+        font, primary, Colors.grey.shade400, s,
+        fontFamily: fontFamily),
+    elevatedButtonTheme:
+        _buttonTheme(primary, Colors.white, s, fontFamily: fontFamily),
+    scrollbarTheme: _scrollbarTheme(secondary),
+    drawerTheme: DrawerThemeData(backgroundColor: Color(0xe3e8f0)),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 0, 66, 97),
+      size: 20,
+    ),
+    //iconTheme: IconThemeData(color:secondary,size: s*20 )
+    //datePickerTheme: _calendarTheme(primary,font,s)
+  );
+}
+
+ThemeData _sunsetRedTheme(double s, String? fontFamily) {
+  const primary = Color(0xFFE74C3C);
+  const secondary = Color.fromARGB(255, 145, 99, 94);
+  const bg = Color(0xFFFFF5F4);
+  const font = Color(0xFF641E16);
+  const panel = Color(0xFFFFCFC9);
+
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(seedColor: primary, secondary: secondary),
+    scaffoldBackgroundColor: bg,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: panel,
+      foregroundColor: font,
+    ),
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+    inputDecorationTheme: _inputDecoration(
+        font, primary, Colors.red.shade200, s,
+        fontFamily: fontFamily),
+    elevatedButtonTheme:
+        _buttonTheme(primary, Colors.white, s, fontFamily: fontFamily),
+    cardTheme: _cardTheme(),
+    scrollbarTheme: _scrollbarTheme(secondary),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 230, 23, 0),
+      size: 20,
+    ),
+    // datePickerTheme: _calendarTheme(primary,font,s)
+  );
+}
+
+ThemeData _tinyGreenTheme(double s, String? fontFamily) {
+  // Facebook-style Green Color Palette
+  const primary =
+      Color(0xFF008141); // FB-style strong green (acts like FB blue)
+  const secondary = Color(0xFF4CAF7B); // soft green accent
+  const bg = Color(0xFFF4F7F5); // FB-like light background
+  const font = Color(0xFF1F3B2D); // deep readable text
+  const panel = Color(0xFFFFFFFF); // white panel like FB cards
+
+  return ThemeData(
+    useMaterial3: true,
+
+    // ===== Color Scheme =====
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primary,
+      primary: primary,
+      secondary: secondary,
+      background: bg,
+      brightness: Brightness.light,
+    ),
+
+    scaffoldBackgroundColor: bg,
+
+    // ===== AppBar ===== (FB style = white, small shadow, bold title)
+    appBarTheme: AppBarTheme(
+      backgroundColor: Colors.white,
+      elevation: 1,
+      shadowColor: Colors.black12,
+      foregroundColor: primary,
+      centerTitle: false,
+      titleTextStyle: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: primary,
+          fontFamily: fontFamily),
+    ),
+
+    // ===== Text Theme =====
+    textTheme: _textTheme(font, s, fontFamily: fontFamily),
+
+    // ===== Input Decoration =====
+    inputDecorationTheme: _inputDecoration(
+        font,
+        primary,
+        const Color(0xFFB9DAC6), // subtle border like FB
+        s,
+        fill: Colors.white,
+        fontFamily: fontFamily // FB uses white input background
+        ),
+
+    // ===== Buttons ===== (FB uses solid primary color)
+    elevatedButtonTheme:
+        _buttonTheme(primary, Colors.white, s, fontFamily: fontFamily),
+
+    // ===== Card Theme ===== (FB cards are white with light radius & shadow)
+    cardTheme: _cardTheme(),
+
+    // ===== Scrollbar =====
+    scrollbarTheme: _scrollbarTheme(secondary),
+
+    // ===== Icon Theme =====
+    iconTheme: const IconThemeData(
+      color: primary,
+      size: 20,
+    ),
+
+    // ===== Divider ===== (Facebook uses very soft dividers)
+    dividerTheme: DividerThemeData(
+      color: Colors.grey.shade300,
+      thickness: 1,
+    ),
+
+    // ===== Chip Theme =====
+    chipTheme: ChipThemeData(
+      backgroundColor: Colors.white,
+      selectedColor: secondary.withOpacity(0.3),
+      labelStyle: TextStyle(
+        fontFamily: fontFamily,
+        color: font,
+        fontSize: 12 * s,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+    ),
+  );
+}
+
+TextTheme _textTheme(Color color, double s, {String? fontFamily}) {
+  double size(double base) => (base * s).clamp(11.6, 24);
+  return TextTheme(
+    bodyLarge: TextStyle(
+      color: color,
+      fontSize: size(15),
+      fontWeight: FontWeight.w400,
+      fontFamily: fontFamily,
+      height: 1.45,
+      letterSpacing: 0.15,
+    ),
+    bodyMedium: TextStyle(
+        color: color,
+        fontSize: size(13.5),
+        fontWeight: FontWeight.w400,
+        height: 1.4,
+        letterSpacing: 0.25,
+        fontFamily: fontFamily),
+    bodySmall: TextStyle(
+      color: color,
+      fontSize: size(12),
+      fontFamily: fontFamily,
+      fontWeight: FontWeight.w400,
+      height: 1.35,
+      letterSpacing: 0.4,
+    ),
+    titleLarge: TextStyle(
+      color: color,
+      //fontWeight: FontWeight.bold,
+      fontSize: size(20.0),
+      fontFamily: fontFamily, fontWeight: FontWeight.w600,
+      height: 1.3,
+      letterSpacing: -0.2,
+    ),
+    titleMedium: TextStyle(
+        color: color,
+        fontWeight: FontWeight.w600,
+        height: 1.35,
+        letterSpacing: 0.1,
+        fontSize: size(16.0),
+        fontFamily: fontFamily),
+    titleSmall: TextStyle(
+        color: color,
+        fontWeight: FontWeight.bold,
+        fontSize: size(14),
+        fontFamily: fontFamily),
+    headlineSmall: TextStyle(
+        color: color,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+        letterSpacing: 0.1,
+        fontSize: size(14),
+        fontFamily: fontFamily),
+  );
+}
+
+/// -----------------------------
+/// Input Decoration Theme
+/// -----------------------------
+InputDecorationTheme _inputDecoration(
+    Color font, Color focus, Color border, double s,
+    {Color? fill, String? fontFamily}) {
+  return InputDecorationTheme(
+    filled: true,
+    fillColor: fill ?? Colors.white,
+    contentPadding:
+        EdgeInsets.symmetric(horizontal: 12 * s).copyWith(bottom: 2),
+    labelStyle:
+        TextStyle(color: font, fontSize: 11 * s, fontFamily: fontFamily),
+    errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+    focusedErrorBorder:
+        OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+    enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: border, width: 1.2),
+        borderRadius: BorderRadius.circular(4)),
+    disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: border.withOpacity(0.6), width: 1.4),
+        borderRadius: BorderRadius.circular(6)),
+    focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: focus, width: .9),
+        borderRadius: BorderRadius.circular(4)),
+    border: OutlineInputBorder(
+        borderSide: BorderSide(color: border, width: 1),
+        borderRadius: BorderRadius.circular(4),
+        gapPadding: 0),
+    suffixIconConstraints: const BoxConstraints(minWidth: 28, minHeight: 20),
+  );
+}
+
+/// -----------------------------
+/// Elevated Button Theme
+/// -----------------------------
+ElevatedButtonThemeData _buttonTheme(Color bg, Color fg, double s,
+    {String? fontFamily}) {
+  double size(double v) => (v * s).clamp(10, 14);
+  return ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      backgroundColor: bg,
+      foregroundColor: fg,
+      textStyle: TextStyle(
+        fontWeight: FontWeight.w500,
+        fontSize: size(s),
+        fontFamily: fontFamily,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 14 * s, vertical: 4 * s),
+      minimumSize: Size(64 * s, 26.5 * s),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      elevation: 3,
+    ),
+  );
+}
+
+/// -----------------------------
+/// Card Theme
+/// -----------------------------
+CardThemeData _cardTheme({Color? color}) => CardThemeData(
+      color: color ?? Colors.white,
+      elevation: 2,
+      shape: const RoundedRectangleBorder(),
+      margin: const EdgeInsets.only(left: 2, right: 2, bottom: 0, top: 0),
+    );
+DatePickerThemeData _calendarTheme(
+    Color primary, Color font, double s, String? fontfamily) {
+  return DatePickerThemeData(
+    backgroundColor: Colors.white,
+    surfaceTintColor: Colors.transparent,
+    elevation: 2,
+    shadowColor: Colors.black26,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+
+    // Header
+    headerBackgroundColor: primary.withOpacity(.15),
+    headerForegroundColor: font,
+    headerHeadlineStyle: TextStyle(
+        fontSize: 18 * s,
+        fontWeight: FontWeight.w700,
+        color: font,
+        fontFamily: fontfamily),
+    headerHelpStyle: TextStyle(
+        fontSize: 12 * s, color: font.withOpacity(.7), fontFamily: fontfamily),
+
+    // Weekday style
+    weekdayStyle: TextStyle(
+        fontSize: 12 * s,
+        color: primary.withOpacity(.8),
+        fontWeight: FontWeight.w600,
+        fontFamily: fontfamily),
+
+    // Day cells
+    dayStyle: TextStyle(
+        fontSize: 13 * s, fontWeight: FontWeight.bold, fontFamily: fontfamily),
+    dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(MaterialState.disabled)) return font.withOpacity(.5);
+      if (states.contains(MaterialState.selected)) return Colors.white;
+      return font;
+    }),
+    dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(MaterialState.selected))
+        return primary.withOpacity(0.2);
+      return null;
+    }),
+    dayOverlayColor: WidgetStateProperty.all(primary.withOpacity(.2)),
+
+    // Today
+    todayForegroundColor: WidgetStateProperty.all(primary.withBlue(100)),
+    todayBackgroundColor: WidgetStateProperty.all(primary.withOpacity(.6)),
+
+    // Year picker
+    yearStyle: TextStyle(
+        fontSize: 14 * s, fontWeight: FontWeight.w600, fontFamily: fontfamily),
+    yearForegroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(MaterialState.selected)) return Colors.white;
+      return font;
+    }),
+    yearBackgroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(MaterialState.selected)) return primary;
+      return primary.withOpacity(.15);
+    }),
+  );
+}
+
+class ThemeProvider with ChangeNotifier {
+  static const _themeKeyPref = 'theme_key';
+  static const _fontFamilyPref = 'font_family';
+
+  AppThemeKeys _themeKey = AppThemeKeys.orange;
+  String _fontFamily = 'Roboto';
+
+  AppThemeKeys get themeKey => _themeKey;
+  String get fontFamily => _fontFamily;
+
+  ThemeData getTheme(BuildContext context) =>
+      generateThemeData(_themeKey, context, fontFamily: _fontFamily);
+
+  /// 🔄 Load saved values
+  Future<void> loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    _themeKey =
+        AppThemeKeys.values[prefs.getInt(_themeKeyPref) ?? _themeKey.index];
+    _fontFamily = prefs.getString(_fontFamilyPref) ?? _fontFamily;
+    notifyListeners();
+  }
+
+  /// 🎨 Set Theme
+  Future<void> setTheme(AppThemeKeys key) async {
+    if (key == _themeKey) return;
+    _themeKey = key;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt(_themeKeyPref, key.index);
+  }
+
+  Future<void> setFontFamily(String font) async {
+    if (font == _fontFamily) return;
+    _fontFamily = font;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(_fontFamilyPref, font);
+  }
+}
