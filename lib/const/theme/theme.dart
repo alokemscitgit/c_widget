@@ -866,7 +866,7 @@ class ThemeProvider with ChangeNotifier {
   static const _themeKeyPref = 'theme_key';
   static const _fontFamilyPref = 'font_family';
 
-  AppThemeKeys _themeKey = AppThemeKeys.orange;
+  AppThemeKeys _themeKey = AppThemeKeys.coolGrey;
   String _fontFamily = 'Roboto';
 
   AppThemeKeys get themeKey => _themeKey;

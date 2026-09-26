@@ -12,8 +12,10 @@ extension CAppThemeX on BuildContext {
   bool get isDark => Theme.of(this).brightness == Brightness.dark;
 
   /// Optional override wrapper for color parameters
-  _AppColors withColorOverrides({Color? overrideColor, Color? overrideTextColor}) =>
-      _AppColors(this, overrideColor: overrideColor, overrideTextColor: overrideTextColor);
+  _AppColors withColorOverrides(
+          {Color? overrideColor, Color? overrideTextColor}) =>
+      _AppColors(this,
+          overrideColor: overrideColor, overrideTextColor: overrideTextColor);
 }
 
 // ============================================================================
@@ -44,7 +46,8 @@ class _AppColors {
   Color get buttonBg =>
       _theme.elevatedButtonTheme.style?.backgroundColor?.resolve({}) ?? primary;
   Color get buttonTextColor =>
-      _theme.elevatedButtonTheme.style?.foregroundColor?.resolve({}) ?? onPrimary;
+      _theme.elevatedButtonTheme.style?.foregroundColor?.resolve({}) ??
+      onPrimary;
 
   // Surfaces & Backgrounds
   Color get card => _theme.cardColor;
@@ -60,13 +63,15 @@ class _AppColors {
   Color get animColor => primary.withValues(alpha: 0.18);
   Color get autoTextColor => context.isDark ? Colors.white : Colors.black;
   Color get autoBgColor => context.isDark ? Colors.black : Colors.white;
-
+  Color get kWebGray => Color(0xFFf8fafb);
+  Color get blueDeep => Color(0xFF0c6cbc);
   // State & Surface Colors (AppThemeColors overrides)
   Color get normalBg =>
       _overrideColor ?? _scheme.surfaceContainerHighest.withValues(alpha: 0.6);
   Color get hoverBg => primary.withValues(alpha: 0.05);
   Color get selectedBg => primary.withValues(alpha: 0.3);
-Color get disabledColor=>Colors.grey[_theme.brightness == Brightness.dark ? 700 : 50]!;
+  Color get disabledColor =>
+      Colors.grey[_theme.brightness == Brightness.dark ? 700 : 50]!;
   // Text Colors
   Color get normalText =>
       _overrideTextColor ?? (_textTheme.bodyMedium?.color ?? _scheme.onSurface);
@@ -87,7 +92,10 @@ Color get disabledColor=>Colors.grey[_theme.brightness == Brightness.dark ? 700 
   }
 
   Color borderColorStatic({bool isEnabled = true, bool isFocused = false}) =>
-      context.style.inputBorder(isEnabled: isEnabled, isFocused: isFocused).borderSide.color;
+      context.style
+          .inputBorder(isEnabled: isEnabled, isFocused: isFocused)
+          .borderSide
+          .color;
 }
 
 // ============================================================================
@@ -101,18 +109,25 @@ class _AppStyles {
   TextTheme get _textTheme => _theme.textTheme;
 
   // Chainable Text Styles
-  _StyleBuilder get bodySmall => _StyleBuilder(context, _textTheme.bodySmall ?? const TextStyle());
-  _StyleBuilder get bodyMedium => _StyleBuilder(context, _textTheme.bodyMedium ?? const TextStyle());
-  _StyleBuilder get bodyLarge => _StyleBuilder(context, _textTheme.bodyLarge ?? const TextStyle());
-  _StyleBuilder get titleSmall => _StyleBuilder(context, _textTheme.titleSmall ?? const TextStyle());
-  _StyleBuilder get titleMedium => _StyleBuilder(context, _textTheme.titleMedium ?? const TextStyle());
-  _StyleBuilder get titleLarge => _StyleBuilder(context, _textTheme.titleLarge ?? const TextStyle());
-  
+  _StyleBuilder get bodySmall =>
+      _StyleBuilder(context, _textTheme.bodySmall ?? const TextStyle());
+  _StyleBuilder get bodyMedium =>
+      _StyleBuilder(context, _textTheme.bodyMedium ?? const TextStyle());
+  _StyleBuilder get bodyLarge =>
+      _StyleBuilder(context, _textTheme.bodyLarge ?? const TextStyle());
+  _StyleBuilder get titleSmall =>
+      _StyleBuilder(context, _textTheme.titleSmall ?? const TextStyle());
+  _StyleBuilder get titleMedium =>
+      _StyleBuilder(context, _textTheme.titleMedium ?? const TextStyle());
+  _StyleBuilder get titleLarge =>
+      _StyleBuilder(context, _textTheme.titleLarge ?? const TextStyle());
+
   // Custom Error Preset
   _StyleBuilder get txtError => bodyLarge.errorText;
 
   // Input Theme & Sizes
-  InputDecorationThemeData get inputDecorationTheme => _theme.inputDecorationTheme;
+  InputDecorationThemeData get inputDecorationTheme =>
+      _theme.inputDecorationTheme;
   double get fontSize => inputDecorationTheme.labelStyle?.fontSize ?? 12;
   double get iconSize => (((_textTheme.bodyLarge?.fontSize) ?? 16) * 1.5);
 
@@ -170,23 +185,32 @@ class _StyleBuilder {
   TextStyle get setStyle => style;
 
   // ---------- FONT STYLE ----------
-  _StyleBuilder get italic => _StyleBuilder(context, style.copyWith(fontStyle: FontStyle.italic));
-  _StyleBuilder get normal => _StyleBuilder(context, style.copyWith(fontStyle: FontStyle.normal));
+  _StyleBuilder get italic =>
+      _StyleBuilder(context, style.copyWith(fontStyle: FontStyle.italic));
+  _StyleBuilder get normal =>
+      _StyleBuilder(context, style.copyWith(fontStyle: FontStyle.normal));
 
   // ---------- FONT WEIGHT ----------
-  _StyleBuilder get bold => _StyleBuilder(context, style.copyWith(fontWeight: FontWeight.bold));
-  _StyleBuilder get semiBold => _StyleBuilder(context, style.copyWith(fontWeight: FontWeight.w600));
-  _StyleBuilder get light => _StyleBuilder(context, style.copyWith(fontWeight: FontWeight.w300));
+  _StyleBuilder get bold =>
+      _StyleBuilder(context, style.copyWith(fontWeight: FontWeight.bold));
+  _StyleBuilder get semiBold =>
+      _StyleBuilder(context, style.copyWith(fontWeight: FontWeight.w600));
+  _StyleBuilder get light =>
+      _StyleBuilder(context, style.copyWith(fontWeight: FontWeight.w300));
 
   // ---------- COLORS ----------
-  _StyleBuilder get colorBlack => _StyleBuilder(context, style.copyWith(color: Colors.black));
-  _StyleBuilder get colorWhite => _StyleBuilder(context, style.copyWith(color: Colors.white));
-  _StyleBuilder get colorGrey => _StyleBuilder(context, style.copyWith(color: Colors.grey));
-  _StyleBuilder get colorButtonText =>
-      _StyleBuilder(context, style.copyWith(color: context.color.buttonTextColor));
+  _StyleBuilder get colorBlack =>
+      _StyleBuilder(context, style.copyWith(color: Colors.black));
+  _StyleBuilder get colorWhite =>
+      _StyleBuilder(context, style.copyWith(color: Colors.white));
+  _StyleBuilder get colorGrey =>
+      _StyleBuilder(context, style.copyWith(color: Colors.grey));
+  _StyleBuilder get colorButtonText => _StyleBuilder(
+      context, style.copyWith(color: context.color.buttonTextColor));
 
   /// Custom color method (works clean now because _StyleBuilder doesn't inherit TextStyle.color)
-  _StyleBuilder withColor(Color color) => _StyleBuilder(context, style.copyWith(color: color));
+  _StyleBuilder withColor(Color color) =>
+      _StyleBuilder(context, style.copyWith(color: color));
 
   _StyleBuilder get darklightText => _StyleBuilder(
         context,
@@ -195,9 +219,12 @@ class _StyleBuilder {
         ),
       );
 
-  _StyleBuilder get errorText => _StyleBuilder(context, style.copyWith(color: Colors.red));
+  _StyleBuilder get errorText =>
+      _StyleBuilder(context, style.copyWith(color: Colors.red));
 
   // ---------- SIZE & DECORATION ----------
-  _StyleBuilder size(double value) => _StyleBuilder(context, style.copyWith(fontSize: value));
-  _StyleBuilder get underline => _StyleBuilder(context, style.copyWith(decoration: TextDecoration.underline));
+  _StyleBuilder size(double value) =>
+      _StyleBuilder(context, style.copyWith(fontSize: value));
+  _StyleBuilder get underline => _StyleBuilder(
+      context, style.copyWith(decoration: TextDecoration.underline));
 }

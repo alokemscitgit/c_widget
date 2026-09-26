@@ -37,10 +37,10 @@ class _CTabButtonState extends State<CTabButton> {
     final enabledBorderColor = context.color.borderColor ;
 
     final Color hoverBg = (Theme.of(context).brightness == Brightness.dark)
-        ? Colors.grey[700]!
+        ? Colors.grey[500]!
         : Colors.white;
     final Color selectedBg =
-        Theme.of(context).colorScheme.surfaceVariant.withOpacity(.05);
+        Theme.of(context).colorScheme.surfaceVariant.withOpacity(.1);
     final Color normalBg = context.color.normalBg;
     final Color hoverText = context.color.normalText;
     final Color normalText = context.color.hoverText;
@@ -55,26 +55,26 @@ class _CTabButtonState extends State<CTabButton> {
         padding: EdgeInsets.zero,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(6),
-            topRight:
-                widget.isSelected ? Radius.circular(6) : Radius.circular(0),
+            topLeft: Radius.circular(12),
+            // topRight:
+            //     widget.isSelected ? Radius.circular(6) : Radius.circular(0),
             bottomRight:
-                widget.isSelected ? Radius.circular(0) : Radius.circular(6),
+                Radius.circular(12),
           ),
           color: widget.isSelected
-              ? selectedBg
+              ? Theme.of(context).brightness == Brightness.dark? normalBg: Colors.white
               : isHover
-                  ? hoverBg.withOpacity(0.01)
+                  ? hoverBg.withOpacity(0.2)
                   : normalBg,
           // USE uniform border
           border: widget.isSelected
               ? Border(
                   top: BorderSide(
-                    width:  context.style.borderWidth() * .7,
+                    width:  context.style.borderWidth() * .05,
                     color: enabledBorderColor,
                   ),
                   left: BorderSide(
-                    width: context.style.borderWidth() * .7,
+                    width: context.style.borderWidth() * .1,
                     color: enabledBorderColor,
                   ),
                   right: BorderSide(
@@ -82,19 +82,31 @@ class _CTabButtonState extends State<CTabButton> {
                     color: enabledBorderColor,
                   ),
                 )
-              : Border.all(
-                  width: context.style.borderWidth()  * .7,
-                  color: enabledBorderColor,
+              : Border(
+                  top: BorderSide(
+                    width:  context.style.borderWidth() * .05,
+                    color: enabledBorderColor,
+                  ),
+                  left: BorderSide(
+                    width: context.style.borderWidth() * .3,
+                    color: enabledBorderColor,
+                  ),
+                  right: BorderSide(
+                    width: context.style.borderWidth()  * .4,
+                    color: enabledBorderColor,
+                  ),
                 ),
           boxShadow: isHover && !widget.isSelected
               ? [
                   BoxShadow(
                     color: hoverBg.withOpacity(0.05),
-                    spreadRadius: 0,
+                    spreadRadius: -1,
                     blurRadius: 0,
                   )
                 ]
-              : [],
+              : [
+                //BoxShadow(color: Colors.white)
+              ],
         ),
         child: AnimatedContainer(
           decoration: BoxDecoration(color: Colors.transparent),
@@ -110,26 +122,31 @@ class _CTabButtonState extends State<CTabButton> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: widget.buttonClick,
-                child: Text(
-                  widget.text,
-                  style: context.style.bodySmall.style .copyWith(
-                    fontStyle: FontStyle.italic,
-                    fontSize:
-                        (context.style.bodySmall.style.fontSize ?? 9.5) *
-                            .9,
-                    fontWeight: isHover || widget.isSelected
-                        ? FontWeight.w600
-                        : FontWeight.w500,
-                    color:
-                        isHover || widget.isSelected ? hoverText : widget.textColor ?? normalText,
-                  ),
+                child: Row(
+                  children: [
+                    Text(
+                      widget.text,
+                      style: context.style.bodySmall.style .copyWith(
+                        fontStyle: FontStyle.italic,
+                        fontSize:
+                            (context.style.bodySmall.style.fontSize ?? 9) *
+                                .8,
+                        fontWeight: isHover || widget.isSelected
+                            ? FontWeight.w500
+                            : FontWeight.w400,
+                            height: 0.6,
+                        color:
+                            isHover || widget.isSelected ? hoverText : widget.textColor ?? normalText,
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
               // CROSS BUTTON
               if (widget.isCrossButton)
                 Padding(
-                  padding: const EdgeInsets.only(left: 6),
+                  padding: const EdgeInsets.only(left: 6,bottom: 1),
                   child: MouseRegion(
                     onEnter: (_) => setState(() => isCrossHover = true),
                     onExit: (_) => setState(() => isCrossHover = false),
